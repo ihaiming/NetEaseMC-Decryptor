@@ -35,13 +35,6 @@ git clone https://github.com/ihaiming/NetEaseMC-Decryptor.git
 
 2. 直接打开 index.html 文件即可使用
 
-### 部署到GitHub Pages
-
-1. Fork 此仓库
-2. 在仓库设置中开启 GitHub Pages
-3. 选择 main 分支作为源
-4. 保存设置后即可访问你的部署页面
-
 ## 使用方法
 
 ### 方法一：ZIP文件解密（推荐）
