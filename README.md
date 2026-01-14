@@ -22,7 +22,7 @@
 
 ### 在线使用
 
-直接访问部署页面：[https://hm0.top/mc/index.html](https://hm0.top/mc/index.html)
+直接访问部署页面：[https://mc.hm0.top/](https://mc.hm0.top/)
 
 ### 本地运行
 
@@ -79,7 +79,7 @@ git clone https://github.com/ihaiming/NetEaseMC-Decryptor.git
 ```
 
 NetEaseMC-Decryptor/
-├──index.html          # 主页面
+├──MCDecryptor.html          # 主页面
 ├──README.md           # 说明文档
 ├──LICENSE             # GPL-3.0许可证
 
@@ -153,7 +153,7 @@ NetEaseMC-Decryptor/
 如有问题或建议，请通过以下方式联系：
 
 - 提交 GitHub Issue
-- 加入QQ群：[https://hm0.top/index.php/start-page.html](https://hm0.top/index.php/start-page.html)
+- 加入QQ群：[https://hm0.top/start-page.html](https://hm0.top/start-page.html)
 - 在项目讨论区留言
 
 ---
