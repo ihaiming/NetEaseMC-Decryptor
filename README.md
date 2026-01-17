@@ -147,7 +147,7 @@ NetEaseMC-Decryptor/
 - 感谢 JSZip 库提供的优秀文件处理能力
 - 感谢所有参与测试和反馈的用户
 - 感谢开源社区的支持和贡献
-
+- 本项目基于原作者[AS5L](https://github.com/AS5L/AS5L.github.io)，感谢其对本项目的大力支持
 ## 联系方式
 
 如有问题或建议，请通过以下方式联系：
