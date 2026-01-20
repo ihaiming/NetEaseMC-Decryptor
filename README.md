@@ -4,6 +4,21 @@
 
 这是一个完全在浏览器中运行的网易版Minecraft存档解密工具，无需安装任何软件，无需上传文件到服务器，所有操作均在本地完成并且完全开源，保护用户隐私。
 
+## 合作
+
+> **💡 说明**：本项目与 [Java版网易MC存档解密工具](https://github.com/Jerbvsjhs/NeteaseMcDencrypter) 形成互补，为用户提供不同场景下的选择：
+
+我应该选择哪个项目？
+
+如果你需要：
+- **快速解密单个存档** ✅ **推荐使用本工具**（零安装，开箱即用）
+- **批量处理多个存档** ✅ **推荐使用 [Java版工具](https://github.com/Jerbvsjhs/NeteaseMcDencrypter)**（功能更完整）
+- **集成到自动化流程中** ✅ **推荐使用 [Java版工具](https://github.com/Jerbvsjhs/NeteaseMcDencrypter)**（更适合编程调用）
+
+## 项目出处
+
+> 本项目基于 [AS5L](https://github.com/AS5L/AS5L.github.io) 的核心算法进行构建，并进行了全面的用户体验优化、安全加固与功能增强。
+
 ## 功能特性
 
 - **完全本地解密** - 所有解密操作都在浏览器中完成，文件不会上传到任何服务器
@@ -147,7 +162,8 @@ NetEaseMC-Decryptor/
 - 感谢 JSZip 库提供的优秀文件处理能力
 - 感谢所有参与测试和反馈的用户
 - 感谢开源社区的支持和贡献
-- 本项目基于原作者[AS5L](https://github.com/AS5L/AS5L.github.io)，感谢其对本项目的大力支持
+- 感谢 [AS5L](https://github.com/AS5L/AS5L.github.io) 提供的核心解密算法，这是本项目的基石
+
 ## 联系方式
 
 如有问题或建议，请通过以下方式联系：
