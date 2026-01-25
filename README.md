@@ -137,7 +137,7 @@ NetEaseMC-Decryptor/
 - 📄 **署名要求** - 必须保留原始版权声明和许可证信息
 - 🔄 **修改声明** - 对代码的修改必须明确标识并说明
 - 🔗 **相同许可** - 衍生作品必须采用相同的GPL v3许可证
-- 📱 **源码公开** - 分发衍生作品时必须公开源代码
+- ⚠️ **源码公开** - 分发衍生作品时必须公开源代码
 
 ### 重要说明
 
@@ -168,9 +168,8 @@ NetEaseMC-Decryptor/
 
 如有问题或建议，请通过以下方式联系：
 
-- 提交 GitHub Issue
+- 提交 Issue
 - 加入QQ群：[https://hm0.top/start-page.html](https://hm0.top/start-page.html)
-- 在项目讨论区留言
 
 ---
 
