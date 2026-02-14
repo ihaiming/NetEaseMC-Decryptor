@@ -1,29 +1,47 @@
-# Minecraft 网易版存档解密工具
+# Minecraft 网易版存档解密工具 · 优化重构版
 
 ## 项目简介
 
 这是一个完全在浏览器中运行的网易版Minecraft存档解密工具，无需安装任何软件，无需上传文件到服务器，所有操作均在本地完成并且完全开源，保护用户隐私。
 
+### 📌 分支版本说明
+
+本项目是基于 [AS5L 的原项目](https://github.com/AS5L/AS5L.github.io) 核心算法进行二次开发的**独立分支版本**。在原项目提供的基础解密功能之上，本分支重点进行了**全面的产品化重构**，增强了**安全性、用户体验、错误处理和多语言支持**，并作为独立分支持续维护。
+
 > **💡 说明**：除了本项目外，社区还存在其他优秀的实现，为用户提供了多样化的选择。您可以根据自己的使用场景和技术偏好，选择最合适的工具：
->
-> ### 我应该选择哪个项目？
->
-> | 需求场景 / 工具特点 | **[浏览器前端版](https://github.com/ihaiming/NetEaseMC-Decryptor/)** | **[C语言工具](https://github.com/Carbonateds/MCWorld-Converter)** | **[Java版工具](https://github.com/Jerbvsjhs/NeteaseMcDencrypter)** | **[NodeJS 版工具](https://github.com/HTMonkeyG/XOR-MC-Archive-Decrypt/)** |
-> | :--- | :--- | :--- | :--- | :--- |
-> | **典型用户** | **任何用户**，尤其是**临时、快速**使用，或**重视隐私**、**使用非Windows系统**的用户 | 熟悉命令行、追求极简执行的Windows用户 | 需要批量处理、或希望将解密功能**集成到其他程序**中的开发者/高级用户 | 习惯使用 Node.js 环境、喜欢脚本化或希望**轻量集成**的开发者 |
-> | **核心优势** | **零安装、零部署**，在任何有现代浏览器的设备上**立即使用**；**操作全在本地**，文件不上传 | 单个可执行文件，不依赖运行时环境，原生性能 | 功能完整，提供编程接口，适合自动化脚本调用 | 基于 Node.js，易于安装与跨平台运行；适合作为模块嵌入其他 JS/TS 项目 |
-> | **平台要求** | **任何操作系统**（Android, iOS, Windows, macOS, Linux, ChromeOS 等） | Windows（或可在 Linux/macOS 编译） | 需要安装 Java 运行环境 | 需要安装 Node.js 环境 |
-> | **推荐使用场景** | **临时、一次性**的解密需求<br>在**学校、公司**等受限电脑上使用<br>**拒绝安装任何软件**时<br>**跨平台**使用（如在 Mac 上处理 Windows 存档） | 在 Windows 上快速解密单个存档<br>偏好原生程序的速度和独立性<br>无需安装任何环境 | **批量解密**大量存档<br>需要将解密流程**集成到服务器、插件或其他 Java 程序**中 | 希望用脚本快速处理存档<br>在已有 Node.js 环境中直接调用<br>作为 JavaScript/TypeScript 项目的依赖集成 |
->
-> **总结**：
-> - 追求**最便捷、最普适的临时解决方案**，请使用 **浏览器前端版**（无需安装任何软件，打开即用）。
-> - 在**Windows环境**下，喜欢**传统命令行工具**的轻量感和原生性能，请使用 **C语言工具**。
-> - 需要进行**批量处理或二次开发**，请使用 **Java版工具**。
-> - 习惯 **Node.js 生态**、希望以脚本或模块形式集成解密功能，推荐使用 **NodeJS 版工具**。
->
-> ---
->
-> 我们鼓励工具间的互相链接与协作，以便用户能找到最适合自己需求的解决方案。
+
+### 我应该选择哪个项目？
+
+| 需求场景 / 工具特点 | **[浏览器前端版](https://github.com/ihaiming/NetEaseMC-Decryptor/)** | **[C语言工具](https://github.com/Carbonateds/MCWorld-Converter)** | **[Java版工具](https://github.com/Jerbvsjhs/NeteaseMcDencrypter)** | **[NodeJS 版工具](https://github.com/HTMonkeyG/XOR-MC-Archive-Decrypt/)** |
+| :--- | :--- | :--- | :--- | :--- |
+| **典型用户** | **任何用户**，尤其是**临时、快速**使用，或**重视隐私**、**使用非Windows系统**的用户 | 熟悉命令行、追求极简执行的Windows用户 | 需要批量处理、或希望将解密功能**集成到其他程序**中的开发者/高级用户 | 习惯使用 Node.js 环境、喜欢脚本化或希望**轻量集成**的开发者 |
+| **核心优势** | **零安装、零部署**，在任何有现代浏览器的设备上**立即使用**；**操作全在本地**，文件不上传 | 单个可执行文件，不依赖运行时环境，原生性能 | 功能完整，提供编程接口，适合自动化脚本调用 | 基于 Node.js，易于安装与跨平台运行；适合作为模块嵌入其他 JS/TS 项目 |
+| **平台要求** | **任何操作系统**（Android, iOS, Windows, macOS, Linux, ChromeOS 等） | Windows（或可在 Linux/macOS 编译） | 需要安装 Java 运行环境 | 需要安装 Node.js 环境 |
+| **推荐使用场景** | **临时、一次性**的解密需求<br>在**学校、公司**等受限电脑上使用<br>**拒绝安装任何软件**时<br>**跨平台**使用（如在 Mac 上处理 Windows 存档） | 在 Windows 上快速解密单个存档<br>偏好原生程序的速度和独立性<br>无需安装任何环境 | **批量解密**大量存档<br>需要将解密流程**集成到服务器、插件或其他 Java 程序**中 | 希望用脚本快速处理存档<br>在已有 Node.js 环境中直接调用<br>作为 JavaScript/TypeScript 项目的依赖集成 |
+
+**总结**：
+- 追求**最便捷、最普适的临时解决方案**，请使用 **浏览器前端版**（无需安装任何软件，打开即用）。
+- 在**Windows环境**下，喜欢**传统命令行工具**的轻量感和原生性能，请使用 **C语言工具**。
+- 需要进行**批量处理或二次开发**，请使用 **Java版工具**。
+- 习惯 **Node.js 生态**、希望以脚本或模块形式集成解密功能，推荐使用 **NodeJS 版工具**。
+
+---
+
+### 🔁 与原版功能对比
+
+下表列出本分支版本与 [AS5L 原版](https://github.com/AS5L/AS5L.github.io) 的主要差异：
+
+| 功能项 | 原版 | 本优化版 |
+|--------|------|----------|
+| **安全操作提示** | 无明确风险提示 | ✅ 包含文件覆盖警告和备份建议 |
+| **进度显示** | 进度条动画 | ✅ 进度条 + 百分比数字 + 状态文字 |
+| **错误处理** | 单个错误可能导致处理中断 | ✅ 单个文件错误不影响整体流程 |
+| **界面结构** | 基础卡片布局 | ✅ 包含页脚、关于弹窗、响应式优化 |
+| **多语言支持** | 仅中文 | ✅ 中文 + 英文版本 |
+| **SEO与元信息** | 无 | ✅ 添加了 keywords、description、爬虫控制等 |
+| **浏览器兼容提示** | 仅隐藏不支持的功能按钮 | ✅ 显示明确的 API 不支持提示 |
+
+---
 
 ## 项目出处
 
@@ -51,7 +69,7 @@
 
 2. English version
 
-Visit the deployment page directly(Note: This English page is translated by Deepseek. If there are any errors, they are not our responsibility.):
+Visit the deployment page directly (Note: This English page is translated by Deepseek. If there are any errors, they are not our responsibility.):
 [https://mc.hm0.top/en/](https://mc.hm0.top/en/)
 
 ### 本地运行
@@ -63,22 +81,22 @@ git clone https://github.com/ihaiming/NetEaseMC-Decryptor.git
 
 ```
 
-2. 直接打开 index.html 文件即可使用
+2. 直接打开 `MCDecryptor.html` 文件即可使用
 
 ## 使用方法
 
 ### 方法一：ZIP文件解密（推荐）
 
-1. 点击"选择ZIP文件"按钮或拖拽ZIP文件到上传区域
-2. 点击"开始解密"按钮
+1. 点击“选择ZIP文件”按钮或拖拽ZIP文件到上传区域
+2. 点击“开始解密”按钮
 3. 下载解密后的存档文件
 
 ### 方法二：文件夹解密（实验性）
 
 1. 确保使用Chrome/Edge 86+等现代浏览器
-2. 点击"选择文件夹"按钮
+2. 点击“选择文件夹”按钮
 3. 选择包含CURRENT和MANIFEST文件的存档文件夹
-4. 点击"开始解密"按钮
+4. 点击“开始解密”按钮
 5. **注意**：此方式会直接覆盖原文件，请务必先备份！
 
 ## 注意事项
@@ -109,20 +127,22 @@ git clone https://github.com/ihaiming/NetEaseMC-Decryptor.git
 ```
 
 NetEaseMC-Decryptor/
-├──MCDecryptor.html          # 主页面
-├──README.md           # 说明文档
-├──LICENSE             # GPL-3.0许可证
+├── MCDecryptor.html          # 主页面
+├── README.md           # 说明文档
+├── LICENSE             # GPL-3.0许可证
 
 ```
 
+
 ## 浏览器兼容性
 
-- | 浏览器 | ZIP文件解密 | 文件夹解密 |
-- | Chrome |完全支持 | 完全支持 |
-- | Edge | 完全支持 | 完全支持 |
-- | Firefox | 完全支持 | 部分支持 |
-- | Safari | 完全支持 | 部分支持 |
-- | 移动浏览器 | 基本支持 | 不支持|
+| 浏览器 | ZIP文件解密 | 文件夹解密 |
+|--------|-------------|------------|
+| Chrome | 完全支持 | 完全支持 |
+| Edge   | 完全支持 | 完全支持 |
+| Firefox| 完全支持 | 部分支持 |
+| Safari | 完全支持 | 部分支持 |
+| 移动浏览器 | 基本支持 | 不支持 |
 
 ## 贡献指南
 
@@ -177,7 +197,7 @@ NetEaseMC-Decryptor/
 - 感谢 JSZip 库提供的优秀文件处理能力
 - 感谢所有参与测试和反馈的用户
 - 感谢开源社区的支持和贡献
-- 感谢 [AS5L](https://github.com/AS5L/AS5L.github.io) 提供的核心解密算法，这是本项目的基石
+- 特别感谢 [AS5L](https://github.com/AS5L/AS5L.github.io) 提供的核心解密算法，这是本项目的基石
 
 ## 联系方式
 
