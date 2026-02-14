@@ -70,7 +70,7 @@
 2. English version
 
 Visit the deployment page directly (Note: This English page is translated by Deepseek. If there are any errors, they are not our responsibility.):
-[https://mc.hm0.top/en/](https://mc.hm0.top/en/)
+[https://en.mc.hm0.top/](https://en.mc.hm0.top/)
 
 ### 本地运行
 
