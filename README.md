@@ -1,4 +1,4 @@
-# Minecraft 网易版存档解密工具 · 优化重构版
+# Minecraft 网易版存档解密工具
 
 ## 项目简介
 
@@ -204,7 +204,7 @@ NetEaseMC-Decryptor/
 如有问题或建议，请通过以下方式联系：
 
 - 提交 Issue
-- 加入QQ群：[https://hm0.top/start-page.html](https://hm0.top/start-page.html)
+- About us：[https://hm0.top/start-page.html](https://hm0.top/start-page.html)
 
 ---
 
