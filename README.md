@@ -208,7 +208,7 @@ NetEaseMC-Decryptor/
 如有问题或建议，请通过以下方式联系：
 
 - 提交 Issue
-- About US：[https://hm0.top/start-page.html](https://hm0.top/start-page.html)
+- Contact Us：[https://hm0.top/start-page.html](https://hm0.top/start-page.html)
 
 ---
 
