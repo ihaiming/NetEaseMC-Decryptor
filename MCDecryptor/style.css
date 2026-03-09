@@ -1,0 +1,255 @@
+@import url('https://cdnjs.cloudflare.com/ajax/libs/mdui/2.1.4/mdui.min.css');
+
+/* 基础变量与全局重置 */
+:root {
+    --transition-speed: 0.2s;
+}
+
+body {
+    font-family: system-ui, -apple-system, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+    background-color: var(--mdui-color-background);
+    color: var(--mdui-color-on-background);
+    margin: 0;
+    line-height: 1.6;
+}
+
+/* --- 顶部应用栏 --- */
+.appbar-icon {
+    margin: 0 8px 0 16px;
+    color: var(--mdui-color-primary);
+}
+
+mdui-top-app-bar-title {
+    font-weight: 500;
+}
+
+/* --- 主体布局 --- */
+.layout-wrapper {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    min-height: calc(100vh - 64px);
+    padding: 24px 16px;
+    box-sizing: border-box;
+}
+
+.container {
+    width: 100%;
+    max-width: 800px;
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+}
+
+/* 主卡片与上传区域 */
+.main-card {
+    width: 100%;
+    padding: 32px 24px;
+    box-sizing: border-box;
+    border-radius: 20px;
+}
+
+.upload-area {
+    border: 2px dashed var(--mdui-color-outline);
+    border-radius: 16px;
+    padding: 48px 24px;
+    text-align: center;
+    margin-bottom: 24px;
+    transition: all var(--transition-speed) ease;
+    background-color: var(--mdui-color-surface-container-highest);
+    position: relative;
+    cursor: pointer;
+}
+
+.upload-area:hover,
+.upload-area.dragover {
+    border-color: var(--mdui-color-primary);
+    background-color: var(--mdui-color-surface-container);
+}
+
+.upload-title {
+    font-size: 1.15rem;
+    font-weight: 500;
+    margin-top: 0;
+    margin-bottom: 16px;
+    color: var(--mdui-color-on-surface);
+}
+
+.upload-area.error-border {
+    border-color: var(--mdui-color-error) !important;
+    animation: pulse-error 0.5s ease-in-out;
+}
+
+@keyframes pulse-error {
+
+    0%,
+    100% {
+        border-color: var(--mdui-color-error);
+    }
+
+    50% {
+        border-color: var(--mdui-color-error-container);
+    }
+}
+
+.file-input {
+    display: none;
+}
+
+/* 按钮与控制组 */
+.action-buttons {
+    display: flex;
+    gap: 16px;
+    justify-content: center;
+    flex-wrap: wrap;
+    margin-top: 8px;
+}
+
+.control-group {
+    margin-top: 32px;
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+}
+
+/* 通用隐藏类 */
+.hidden-btn {
+    display: none !important;
+}
+
+/* 状态与进度条 */
+.progress-container {
+    margin-top: 24px;
+}
+
+.progress-header {
+    display: flex;
+    justify-content: space-between;
+    font-size: 0.9rem;
+    font-weight: 500;
+    color: var(--mdui-color-on-surface-variant);
+    margin-bottom: 8px;
+}
+
+.file-info {
+    margin-top: 20px;
+    padding: 16px 20px;
+    background-color: var(--mdui-color-surface-container);
+    border: 1px solid var(--mdui-color-outline-variant);
+    border-radius: 12px;
+    font-size: 0.9rem;
+    color: var(--mdui-color-on-surface);
+}
+
+.status-box {
+    margin-top: 20px;
+    padding: 16px 20px;
+    border-radius: 12px;
+    background-color: var(--mdui-color-surface-container-highest);
+    text-align: left;
+    min-height: 24px;
+    font-size: 0.9rem;
+    white-space: pre-wrap;
+    word-break: break-word;
+    color: var(--mdui-color-on-surface-variant);
+}
+
+/* 文本颜色工具类 */
+.text-success {
+    color: var(--mdui-color-primary);
+    font-weight: 600;
+}
+
+.text-error {
+    color: var(--mdui-color-error);
+    font-weight: 600;
+}
+
+/* API 提示 */
+.api-note {
+    font-size: 0.8rem;
+    margin-top: 16px;
+}
+
+.api-note.warning-text {
+    color: var(--mdui-color-error);
+    font-weight: 600;
+}
+
+/* 弹窗排版优化 (Typography) */
+.about-content {
+    font-size: 0.95rem;
+    line-height: 1.7;
+    color: var(--mdui-color-on-surface);
+}
+
+.welcome-text {
+    margin-top: 0;
+    margin-bottom: 20px;
+}
+
+.warning-alert {
+    background-color: var(--mdui-color-error-container);
+    color: var(--mdui-color-on-error-container);
+    padding: 16px 20px;
+    border-radius: 12px;
+}
+
+.warning-alert strong {
+    display: block;
+    font-size: 1.05rem;
+    margin-bottom: 8px;
+}
+
+.warning-alert ol {
+    margin: 0;
+    padding-left: 20px;
+}
+
+.warning-alert li {
+    margin-bottom: 8px;
+}
+
+.warning-alert li:last-child {
+    margin-bottom: 0;
+}
+
+.warning-alert code {
+    background-color: rgba(0, 0, 0, 0.1);
+    padding: 2px 6px;
+    border-radius: 4px;
+    font-family: monospace;
+}
+
+/* 页脚 */
+footer {
+    width: 100%;
+    margin-top: 40px;
+    padding: 24px 0 8px;
+    text-align: center;
+}
+
+.footer-links {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    align-items: center;
+    gap: 16px;
+    font-size: 0.9rem;
+}
+
+.footer-links img {
+    vertical-align: middle;
+}
+
+.footer-links a {
+    color: var(--mdui-color-on-surface-variant);
+    text-decoration: none;
+    transition: color var(--transition-speed) ease;
+}
+
+.footer-links a:hover {
+    color: var(--mdui-color-primary);
+    text-decoration: underline;
+}
