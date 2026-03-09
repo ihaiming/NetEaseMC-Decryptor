@@ -1,5 +1,6 @@
 'use strict'
 import $ from './jquery-4.0.0.esm.min.js'
+import { i18n, switchLanguage, t } from './i18n.js'
 
 // ======== 核心常量与状态 ========
 const ENCRYPTION_HEADER = new Uint8Array([0x80, 0x1D, 0x30, 0x01]);
@@ -14,7 +15,7 @@ const state = {
     downloadUrl: null
 };
 
-// ======== jQuery 元素缓存 (等 DOM 加载完后再获取) ========
+// ======== jQuery 元素缓存 ========
 let $els = {};
 
 // ======== UI 与 工具函数 ========
@@ -44,13 +45,11 @@ const showSuccess = (htmlMsg, snackbarMsg) => {
 
 const updateProgress = (percent, message) => {
     const percentValue = Math.min(100, Math.max(0, percent));
-
-    // MDUI Web Components 通常使用 prop 设置属性
     $els.progressBar.prop('value', percentValue);
     $els.progressText.text(`${Math.round(percentValue)}%`);
 
     if (message) {
-        setStatusHtml(`${message}<br><br>当前进度: ${Math.round(percentValue)}%`);
+        setStatusHtml(`${message}<br><br>${t('progress_title')}: ${Math.round(percentValue)}%`);
     }
 };
 
@@ -59,7 +58,6 @@ const resetDownload = () => {
         URL.revokeObjectURL(state.downloadUrl);
         state.downloadUrl = null;
     }
-    // jQuery 链式操作隐藏按钮
     $els.downloadBtn.hide().addClass('hidden-btn');
 };
 
@@ -67,7 +65,7 @@ const setProcessing = (isProcessing) => {
     state.isProcessing = isProcessing;
     $els.processBtn
         .prop('disabled', isProcessing)
-        .text(isProcessing ? '正在处理...' : '开始解密');
+        .html(isProcessing ? t('js_btn_processing') : t('btn_start_decrypt'));
 };
 
 const formatFileSize = (bytes) => {
@@ -76,7 +74,7 @@ const formatFileSize = (bytes) => {
     return `${(bytes / 1048576).toFixed(2)} MB`;
 };
 
-// ======== 核心解密算法 ========
+// ======== 核心解密算法 (保持不变) ========
 const checkHeader = (fileData, header) =>
     fileData.length >= header.length && header.every((byte, i) => fileData[i] === byte);
 
@@ -115,17 +113,17 @@ const decryptFile = (fileData, key) => {
 
 // ======== 核心业务处理逻辑 ========
 const processZipFile = async () => {
-    if (!state.currentFile) throw new Error('没有选择文件');
-    updateProgress(5, '正在读取ZIP文件...');
+    if (!state.currentFile) throw new Error(t('err_no_file'));
+    updateProgress(5, t('js_reading_zip'));
 
     let zip;
     try {
         zip = await window.JSZip.loadAsync(state.currentFile);
     } catch (zipError) {
-        throw new Error(`读取ZIP文件失败: ${zipError.message}`);
+        throw new Error(`${t('err_read_zip')}: ${zipError.message}`);
     }
 
-    updateProgress(15, '分析存档结构...');
+    updateProgress(15, t('js_analyzing'));
 
     let currentFileEntry = null;
     let manifestFileEntry = null;
@@ -138,24 +136,24 @@ const processZipFile = async () => {
         else if (relativePath.startsWith('MANIFEST')) manifestFileEntry = zipEntry;
     });
 
-    if (!currentFileEntry) throw new Error('找不到CURRENT文件');
-    if (!manifestFileEntry) throw new Error('找不到MANIFEST文件');
+    if (!currentFileEntry) throw new Error(t('err_no_current'));
+    if (!manifestFileEntry) throw new Error(t('err_no_manifest'));
 
-    updateProgress(25, '正在获取解密密钥...');
+    updateProgress(25, t('js_getting_key'));
 
     let currentFileData;
     try {
         currentFileData = await currentFileEntry.async('uint8array');
     } catch (readError) {
-        throw new Error(`读取CURRENT文件失败: ${readError.message}`);
+        throw new Error(`${t('err_read_current')}: ${readError.message}`);
     }
 
     if (!checkHeader(currentFileData, ENCRYPTION_HEADER)) {
-        throw new Error('存档未加密或使用旧版加密');
+        throw new Error(t('err_not_encrypted'));
     }
 
     const key = await getKey(currentFileData, manifestFileEntry.name);
-    updateProgress(35, '开始解密文件...');
+    updateProgress(35, t('js_decrypting'));
 
     const newZip = new window.JSZip();
     let processedFiles = 0;
@@ -170,13 +168,13 @@ const processZipFile = async () => {
                 newZip.file(zipEntry.name, fileData);
             }
             processedFiles++;
-            updateProgress(35 + (processedFiles / totalFiles) * 55, `正在处理文件: ${processedFiles}/${totalFiles}`);
+            updateProgress(35 + (processedFiles / totalFiles) * 55, `${t('word_processing_file')}: ${processedFiles}/${totalFiles}`);
         } catch (fileError) {
-            console.warn(`处理文件 ${zipEntry.name} 时出错:`, fileError);
+            console.warn(`Error on ${zipEntry.name}:`, fileError);
         }
     }
 
-    updateProgress(95, '正在生成解密后的ZIP文件...');
+    updateProgress(95, t('js_generating_zip'));
 
     const content = await newZip.generateAsync({
         type: 'blob',
@@ -187,7 +185,6 @@ const processZipFile = async () => {
     const url = URL.createObjectURL(content);
     state.downloadUrl = url;
 
-    // jQuery 批量设置属性
     $els.downloadBtn.attr({
         href: url,
         download: state.currentFile.name.replace('.zip', '_decrypted.zip') || 'mc_decrypted.zip'
@@ -195,8 +192,8 @@ const processZipFile = async () => {
 };
 
 const processDirectory = async () => {
-    if (!state.directoryHandle) throw new Error('没有选择文件夹');
-    updateProgress(5, '正在扫描文件夹...');
+    if (!state.directoryHandle) throw new Error(t('err_no_file'));
+    updateProgress(5, t('js_scanning_folder'));
 
     let currentFileHandle = null;
     let manifestFileHandle = null;
@@ -210,22 +207,22 @@ const processDirectory = async () => {
         }
     }
 
-    if (!currentFileHandle) throw new Error('找不到CURRENT文件');
-    if (!manifestFileHandle) throw new Error('找不到MANIFEST文件');
+    if (!currentFileHandle) throw new Error(t('err_no_current'));
+    if (!manifestFileHandle) throw new Error(t('err_no_manifest'));
 
-    updateProgress(15, '正在读取加密信息...');
+    updateProgress(15, t('js_reading_enc'));
 
     const currentFile = await currentFileHandle.getFile();
     const currentFileData = new Uint8Array(await currentFile.arrayBuffer());
 
     if (!checkHeader(currentFileData, ENCRYPTION_HEADER)) {
-        throw new Error('存档未加密或使用旧版加密');
+        throw new Error(t('err_not_encrypted'));
     }
 
-    updateProgress(25, '正在获取解密密钥...');
+    updateProgress(25, t('js_getting_key'));
     const key = await getKey(currentFileData, manifestFileHandle.name);
 
-    updateProgress(35, '开始解密文件...');
+    updateProgress(35, t('js_decrypting'));
 
     let processedFiles = 0;
     const totalFiles = fileHandles.length;
@@ -243,12 +240,12 @@ const processDirectory = async () => {
             }
 
             processedFiles++;
-            updateProgress(35 + (processedFiles / totalFiles) * 55, `正在处理文件: ${processedFiles}/${totalFiles}`);
+            updateProgress(35 + (processedFiles / totalFiles) * 55, `${t('word_processing_file')}: ${processedFiles}/${totalFiles}`);
         } catch (fileError) {
-            console.warn(`处理文件 ${fileHandle.name} 时出错:`, fileError);
+            console.warn(`Error on ${fileHandle.name}:`, fileError);
         }
     }
-    updateProgress(100, '文件夹解密完成！');
+    updateProgress(100, t('js_folder_done'));
 };
 
 // ======== 用户交互事件处理器 ========
@@ -256,7 +253,7 @@ const startProcessing = async () => {
     if ((!state.currentFile && !state.directoryHandle) || state.isProcessing) return;
 
     setProcessing(true);
-    updateProgress(0, '正在初始化...');
+    updateProgress(0, t('js_initializing'));
 
     try {
         if (state.useFileSystemAPI) {
@@ -265,8 +262,8 @@ const startProcessing = async () => {
             await processZipFile();
         }
 
-        updateProgress(100, '解密完成！');
-        showSuccess('✓ 解密已成功完成！', '解密已成功完成！');
+        updateProgress(100, t('js_done'));
+        showSuccess(t('js_done_success'));
 
         if (!state.useFileSystemAPI) {
             $els.downloadBtn.css('display', 'flex').removeClass('hidden-btn');
@@ -274,16 +271,16 @@ const startProcessing = async () => {
         }
 
     } catch (error) {
-        console.error('处理过程错误:', error);
-        let errorDetail = `错误详情: ${error.message}`;
+        console.error('Processing error:', error);
+        let errorDetail = `${t('err_detail')} ${error.message}`;
 
-        if (error.message.includes('找不到CURRENT')) errorDetail = '错误：未找到CURRENT文件，请确保是有效的网易版存档或目录是"存档/db"';
-        else if (error.message.includes('找不到MANIFEST')) errorDetail = '错误：未找到MANIFEST文件，请确保是有效的网易版存档或目录是"存档/db"';
-        else if (error.message.includes('未加密')) errorDetail = '错误：该存档未加密或使用不支持的加密格式';
-        else if (error.message.includes('ZIP文件')) errorDetail = '错误：读取ZIP文件失败，文件可能已损坏';
+        if (error.message.includes('CURRENT') || error.message.includes(t('err_no_current'))) errorDetail = t('err_hint_current');
+        else if (error.message.includes('MANIFEST') || error.message.includes(t('err_no_manifest'))) errorDetail = t('err_hint_manifest');
+        else if (error.message.includes('加密') || error.message.includes('encrypted')) errorDetail = t('err_hint_unencrypted');
+        else if (error.message.includes('ZIP')) errorDetail = t('err_hint_zip_corrupt');
 
         showError(errorDetail);
-        updateProgress(0, '处理失败');
+        updateProgress(0, t('js_process_fail'));
     } finally {
         setProcessing(false);
     }
@@ -294,8 +291,8 @@ const handleFileSelect = (file) => {
         const isZipFile = file.type === 'application/zip' || file.name.toLowerCase().endsWith('.zip');
 
         if (!isZipFile) {
-            showError('错误：请上传ZIP格式的存档文件<br>支持的文件格式: .zip', '错误：请上传ZIP格式的存档文件');
-            $els.fileInfo.text(`文件类型错误: ${file.name}`);
+            showError(t('err_upload_zip_only'), t('err_upload_zip_plain'));
+            $els.fileInfo.text(`${t('err_file_type')}: ${file.name}`);
 
             $els.uploadArea.addClass('error-border');
             setTimeout(() => $els.uploadArea.removeClass('error-border'), 3000);
@@ -306,22 +303,22 @@ const handleFileSelect = (file) => {
 
         $els.uploadArea.removeClass('error-border');
         state.currentFile = file;
-        $els.fileInfo.text(`已选择: ${file.name} (${formatFileSize(file.size)})`);
+        $els.fileInfo.text(`${t('word_selected')}: ${file.name} (${formatFileSize(file.size)})`);
         $els.processBtn.prop('disabled', false);
-        setStatusText('ZIP文件已准备就绪，点击"开始解密"按钮');
+        setStatusText(t('js_ready'));
         resetDownload();
 
     } catch (error) {
-        console.error('文件选择错误:', error);
-        showError(`错误: ${error.message}`);
-        $els.fileInfo.text('文件选择失败');
+        console.error('File select error:', error);
+        showError(`${t('err_detail')} ${error.message}`);
+        $els.fileInfo.text(t('err_select_fail'));
         $els.processBtn.prop('disabled', true);
     }
 };
 
 const selectDirectory = async () => {
     try {
-        if (!IS_FS_API_SUPPORTED) throw new Error('当前浏览器不支持文件夹选择API');
+        if (!IS_FS_API_SUPPORTED) throw new Error(t('err_fs_unsupported'));
 
         state.directoryHandle = await window.showDirectoryPicker();
         state.useFileSystemAPI = true;
@@ -339,34 +336,33 @@ const selectDirectory = async () => {
         }
 
         if (!hasCurrent || !hasManifest) {
-            showError('错误：选择的文件夹中缺少 CURRENT 或 MANIFEST 文件，请确保这是网易版MC存档目录或目录是 "存档/db"', '选择的文件夹中缺少必要文件');
-            $els.fileInfo.text('文件夹无效：缺少必要文件');
+            showError(t('err_folder_missing_files'), t('err_folder_invalid'));
+            $els.fileInfo.text(t('err_folder_invalid'));
             $els.processBtn.prop('disabled', true);
             return;
         }
 
-        $els.fileInfo.text(`已选择文件夹: ${state.directoryHandle.name} (${fileCount}个文件)`);
+        $els.fileInfo.text(`${t('word_selected_folder')}: ${state.directoryHandle.name} (${fileCount}${t('word_files')})`);
         $els.processBtn.prop('disabled', false);
-        setStatusHtml('已选择文件夹。<br><span class="text-error">警告：解密会直接覆盖原文件，请确保已备份！</span>');
+        setStatusHtml(t('js_folder_selected'));
         resetDownload();
 
     } catch (error) {
-        console.error('选择文件夹错误:', error);
-        let errorMsg = '选择文件夹失败: ';
-        if (error.name === 'AbortError') errorMsg += '用户取消选择';
-        else if (error.name === 'SecurityError') errorMsg += '安全限制，请检查浏览器权限';
-        else if (error.message.includes('not supported')) errorMsg += '浏览器不支持此功能';
+        console.error('Select folder error:', error);
+        let errorMsg = t('err_folder_select_fail');
+        if (error.name === 'AbortError') errorMsg += t('err_cancel');
+        else if (error.name === 'SecurityError') errorMsg += t('err_security');
+        else if (error.message.includes('not supported')) errorMsg += t('err_fs_unsupported');
         else errorMsg += error.message;
 
         showError(errorMsg);
-        $els.fileInfo.text('选择文件夹失败');
+        $els.fileInfo.text(t('err_select_fail'));
         $els.processBtn.prop('disabled', true);
     }
 };
 
-// ======== jQuery 初始化与事件绑定 ========
+// ======== 初始化与事件绑定 ========
 $(function () {
-    // 缓存 jQuery 对象
     $els = {
         uploadArea: $('#uploadArea'),
         fileInput: $('#fileInput'),
@@ -380,15 +376,31 @@ $(function () {
         progressText: $('#progressText'),
         downloadBtn: $('#downloadBtn'),
         aboutBtn: $('#aboutBtn'),
-        aboutDialog: $('#aboutDialog')
+        aboutDialog: $('#aboutDialog'),
+        langMenu: $('#langMenu')
     };
+
+    // 初始化多语言文本
+    i18n($els);
+
+    // 绑定语言切换事件
+    $els.langMenu.find('mdui-menu-item').on('click', function () {
+        switchLanguage($(this).attr('data-lang'));
+
+        // 如果没有选中任何文件，刷新状态提示
+        if (!state.currentFile && !state.directoryHandle) {
+            setStatusText(t('status_waiting'));
+            $els.fileInfo.text(t('file_info_empty'));
+        }
+    });
 
     if (IS_FS_API_SUPPORTED) {
         $els.fsApiBtn.css('display', 'inline-flex').removeClass('hidden-btn');
     } else {
         $('<div/>', {
             class: 'api-note warning-text',
-            html: '⚠️ 当前浏览器不支持文件夹选择功能，请使用ZIP文件上传功能'
+            'data-i18n': 'api_note_unsupported',
+            html: t('api_note_unsupported')
         }).appendTo($els.apiNoteContainer);
     }
 

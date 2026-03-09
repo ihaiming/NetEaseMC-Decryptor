@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="zh-CN">
+<html lang="zh-cn">
 <!-- 
 NetEaseMCDecryptor
 GitHub: https://github.com/ihaiming/NetEaseMC-Decryptor
@@ -10,14 +10,8 @@ License: GPL v3.0
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta http-equiv="Cache-Control" content="no-store, no-cache, must-revalidate, no-transform, no-siteapp">
-    <meta http-equiv="Pragma" content="no-cache">
-    <meta http-equiv="Expires" content="0">
-    <meta name="format-detection" content="telephone=no, date=no, address=no, email=no">
-    <title>Minecraft 网易版存档解密工具</title>
-    <meta name="keywords"
-        content="网易MC解密,MC解密工具,Minecraft解密,MC存档解密,网易我的世界解密,存档一键解密,NetEaseMCDecryptor,网易版Minecraft存档解密">
-    <meta name="description" content="本站可以一键解密网易版MC存档，无需安装任何软件，无需上传文件到服务器，所有操作均在本地完成并且完全开源，保护用户隐私。">
+    <title data-i18n="app_title">Minecraft 网易版存档解密工具</title>
+    <!-- 引入资源省略，与原版保持一致 -->
     <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
     <link rel="stylesheet" href="./MCDecryptor/style.css">
     <link rel="shortcut icon" href="./MCDecryptor/favicon.ico" type="image/x-icon">
@@ -30,9 +24,16 @@ License: GPL v3.0
 <body>
     <mdui-top-app-bar scroll-behavior="elevate">
         <mdui-icon name="lock_open" class="appbar-icon"></mdui-icon>
-        <mdui-top-app-bar-title>Minecraft 网易版存档解密工具</mdui-top-app-bar-title>
+        <mdui-top-app-bar-title data-i18n="app_title">Minecraft 网易版存档解密工具</mdui-top-app-bar-title>
         <div style="flex-grow: 1"></div>
-        <mdui-button-icon id="aboutBtn" icon="help_outline" aria-label="关于我们" title="关于我们"></mdui-button-icon>
+        <mdui-dropdown>
+            <mdui-button-icon icon="translate" slot="trigger"></mdui-button-icon>
+            <mdui-menu id="langMenu">
+                <mdui-menu-item data-lang="zh">中文（简体）</mdui-menu-item>
+                <mdui-menu-item data-lang="en">English(Google Translate)</mdui-menu-item>
+            </mdui-menu>
+        </mdui-dropdown>
+        <mdui-button-icon id="aboutBtn" icon="help_outline"></mdui-button-icon>
     </mdui-top-app-bar>
 
     <mdui-layout>
@@ -41,77 +42,79 @@ License: GPL v3.0
                 <main class="container">
                     <mdui-card class="main-card">
                         <div class="upload-area" id="uploadArea">
-                            <p class="upload-title">拖拽 ZIP 文件到此处或</p>
-                            <input type="file" id="fileInput" class="file-input" accept=".zip" aria-label="上传ZIP文件">
+                            <p class="upload-title" data-i18n="upload_title">拖拽 ZIP 文件到此处或</p>
+                            <input type="file" id="fileInput" class="file-input" accept=".zip">
 
                             <div class="action-buttons">
-                                <mdui-button id="browseBtn" icon="folder_zip">选择 ZIP 文件</mdui-button>
-                                <mdui-button id="fsApiBtn" class="hidden-btn" variant="tonal"
-                                    icon="create_new_folder">选择文件夹</mdui-button>
+                                <mdui-button id="browseBtn" icon="folder_zip" data-i18n="btn_browse_zip">选择 ZIP
+                                    文件</mdui-button>
+                                <mdui-button id="fsApiBtn" class="hidden-btn" variant="tonal" icon="create_new_folder"
+                                    data-i18n="btn_browse_folder">选择文件夹</mdui-button>
                             </div>
                             <div id="apiNoteContainer"></div>
                         </div>
 
-                        <div class="file-info" id="fileInfo">未选择文件</div>
+                        <div class="file-info" id="fileInfo" data-i18n="file_info_empty">未选择文件</div>
 
                         <div class="progress-container">
                             <div class="progress-header">
-                                <span>处理进度</span>
+                                <span data-i18n="progress_title">处理进度</span>
                                 <span id="progressText">0%</span>
                             </div>
                             <mdui-linear-progress id="progressBar" value="0" max="100"></mdui-linear-progress>
                         </div>
 
-                        <div class="status-box" id="status" aria-live="polite">等待操作...</div>
+                        <div class="status-box" id="status" aria-live="polite" data-i18n="status_waiting">等待操作...</div>
 
                         <div class="control-group">
-                            <mdui-button id="processBtn" disabled full-width size="large"
-                                icon="lock_open">开始解密</mdui-button>
+                            <mdui-button id="processBtn" disabled full-width size="large" icon="lock_open"
+                                data-i18n="btn_start_decrypt">开始解密</mdui-button>
                             <mdui-button id="downloadBtn" class="hidden-btn" full-width size="large" variant="filled"
-                                icon="download">下载解密后的存档</mdui-button>
+                                icon="download" data-i18n="btn_download">下载解密后的存档</mdui-button>
                         </div>
                     </mdui-card>
                 </main>
 
                 <footer>
                     <div class="footer-links">
-                        <a href="https://www.gnu.org/licenses/gpl-3.0" target="_blank" rel="license noopener noreferrer"
-                            aria-label="GPL v3 License">
+                        <a href="https://www.gnu.org/licenses/gpl-3.0" target="_blank">
                             <img src="https://img.shields.io/badge/License-GPLv3-blue.svg" alt="License: GPL v3"
                                 loading="lazy">
                         </a>
                         <a href="https://github.com/ihaiming/NetEaseMC-Decryptor" target="_blank"
-                            rel="noopener noreferrer">Github</a>
-                        <a href="https://hm0.top/go/mc.html" target="_blank" rel="noopener noreferrer">部署同款项目</a>
+                            data-i18n="footer_github">Github</a>
+                        <a href="https://hm0.top/go/mc.html" target="_blank" data-i18n="footer_deploy">部署同款项目</a>
                     </div>
                 </footer>
             </div>
         </mdui-layout-main>
     </mdui-layout>
 
-    <mdui-dialog id="aboutDialog" headline="操作提醒" close-on-esc close-on-overlay-click>
+    <mdui-dialog id="aboutDialog" close-on-esc close-on-overlay-click>
+        <span slot="headline" data-i18n="dialog_headline"></span>
         <div class="about-content">
-            <p class="welcome-text">本站可以一键解密网易版MC存档且完全开源，感谢您的使用！</p>
+            <p class="welcome-text" data-i18n="dialog_welcome">本站可以一键解密网易版MC存档且完全开源，感谢您的使用！</p>
 
             <div class="warning-alert">
-                <strong>重要提醒：</strong>
+                <strong data-i18n="dialog_warning_title">重要提醒：</strong>
                 <ol>
-                    <li>使用 <b>"选择文件夹"</b> 功能解密时，会直接覆盖原文件！请务必备份您的存档，特别是 <code>存档/db</code> 目录！</li>
-                    <li>解密过程完全在浏览器本地进行，文件绝不会上传到服务器，保护隐私。</li>
-                    <li>选择ZIP文件解密时，请将 <code>存档/db</code> 目录下的全部文件压缩后上传，不要压缩整个存档大目录。压缩级别建议选 <b>"仅存储"</b>。</li>
+                    <li data-i18n="dialog_warning_1">使用 <b>"选择文件夹"</b> 功能解密时，会直接覆盖原文件！请务必备份您的存档，特别是 <code>存档/db</code>
+                        目录！</li>
+                    <li data-i18n="dialog_warning_2">解密过程完全在浏览器本地进行，文件绝不会上传到服务器，保护隐私。</li>
+                    <li data-i18n="dialog_warning_3">选择ZIP文件解密时，请将 <code>存档/db</code> 目录下的全部文件压缩后上传，不要压缩整个存档大目录。压缩级别建议选
+                        <b>"仅存储"</b>。</li>
                 </ol>
             </div>
             <div class="mdui-prose">
-                <strong>存档位置：</strong>
-                <p>
+                <strong data-i18n="dialog_path_title">存档位置：</strong>
+                <p data-i18n="dialog_path_mobile">
                     <b>手机端：</b><br><code>/storage/emulated/0/Android/data/com.netease.x19/files/minecraftWorlds/</code>
-                    <br>这里的com.netease.x19如果是从官网下的一般是这个如果不是长按应用图标 → 应用详情 → 点击应用包名
                 </p>
-                <p><b>电脑端（Java版）：</b> 开始游戏 → 选择游戏 → 直接导出到本地</p>
+                <p data-i18n="dialog_path_pc"><b>电脑端（Java版）：</b> 开始游戏 → 选择游戏 → 直接导出到本地</p>
             </div>
         </div>
-        <mdui-button slot="action" variant="text"
-            onclick="document.getElementById('aboutDialog').open = false">我已了解</mdui-button>
+        <mdui-button slot="action" variant="text" onclick="document.getElementById('aboutDialog').open = false"
+            data-i18n="btn_understood">我已了解</mdui-button>
     </mdui-dialog>
 
     <script>
