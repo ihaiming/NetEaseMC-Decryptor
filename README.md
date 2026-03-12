@@ -133,8 +133,10 @@ git clone https://github.com/ihaiming/NetEaseMC-Decryptor.git
 
 NetEaseMC-Decryptor/
 ├── MCDecryptor.html          # 主页面
-├── README.md           # 说明文档
-├── LICENSE             # GPL-3.0许可证
+├── README.md                 # 说明文档
+├── LICENSE                   # GPL-3.0许可证
+├── CODE_OF_CONDUCT.md        # 行为准则（中文）
+├── CODE_OF_CONDUCT_EN.md     # 行为准则（英文）
 
 ```
 
@@ -157,6 +159,17 @@ NetEaseMC-Decryptor/
 3. 提交更改 (`git commit -m 'Add some amazing feature'`)
 4. 推送到分支 (`git push origin feature/amazing-feature`)
 5. 开启一个 Pull Request
+
+在提交 PR 之前，请确保你的改动符合项目的**定位与风格**，并阅读[行为准则](#行为准则)以了解社区规范。
+
+## 行为准则
+
+为了维护一个开放、友好、互相尊重的社区环境，所有参与本项目的贡献者都必须遵守我们制定的行为准则。
+
+- **[行为准则（中文）](CODE_OF_CONDUCT.md)**
+- **[Code of Conduct (English)](CODE_OF_CONDUCT_EN.md)**
+
+请在使用 Issues、提交 PR 或参与讨论前仔细阅读。任何违反准则的行为都可能导致被暂时或永久禁止参与本项目。
 
 ## 许可证
 
