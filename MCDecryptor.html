@@ -84,7 +84,7 @@ License: GPL v3.0
             padding: 24px;
             box-shadow: 0 4px 12px rgba(0,0,0,0.1);
             flex: 1;
-            overflow: hidden; /* 防止子元素溢出 */
+            overflow: hidden;
         }
         
         h1 {
@@ -158,7 +158,7 @@ License: GPL v3.0
             text-transform: uppercase;
             letter-spacing: 0.5px;
             box-shadow: 0 1px 3px rgba(0, 0, 0, 0.12);
-            box-sizing: border-box; /* 确保所有按钮都有正确的盒模型 */
+            box-sizing: border-box;
         }
         
         .browse-btn:hover {
@@ -184,7 +184,7 @@ License: GPL v3.0
             text-transform: uppercase;
             letter-spacing: 0.5px;
             box-shadow: 0 1px 3px rgba(0, 0, 0, 0.12);
-            box-sizing: border-box; /* 确保所有按钮都有正确的盒模型 */
+            box-sizing: border-box;
         }
         
         .process-btn:hover {
@@ -278,7 +278,6 @@ License: GPL v3.0
             text-decoration: none;
             display: none;
             text-align: center;
-            /* 修复下载按钮宽度问题 */
             box-sizing: border-box;
             max-width: 100%;
             white-space: nowrap;
@@ -313,7 +312,7 @@ License: GPL v3.0
             letter-spacing: 0.5px;
             box-shadow: 0 1px 3px rgba(0, 0, 0, 0.12);
             display: none;
-            box-sizing: border-box; /* 确保所有按钮都有正确的盒模型 */
+            box-sizing: border-box;
         }
         
         .fs-api-btn:hover {
@@ -446,7 +445,8 @@ License: GPL v3.0
             transition: all 0.2s ease;
             min-width: 120px;
             box-shadow: 0 1px 3px rgba(0, 0, 0, 0.12);
-            box-sizing: border-box; /* 确保所有按钮都有正确的盒模型 */
+            box-sizing: border-box;
+            margin: 0 5px;
         }
         
         .sweet-alert-btn:hover {
@@ -458,7 +458,7 @@ License: GPL v3.0
             transform: scale(0.98);
         }
         
-        /* 关于我们样式 */
+        /* 关于我们按钮 */
         .about-btn {
             position: fixed;
             bottom: 20px;
@@ -490,6 +490,7 @@ License: GPL v3.0
             transform: translateY(0);
         }
         
+        /* 移动端优化 */
         @media (max-width: 600px) {
             .container {
                 margin: 0;
@@ -525,83 +526,100 @@ License: GPL v3.0
                 height: 45px;
             }
             
-            /* 在移动端优化下载按钮 */
+            /* 下载按钮移动端优化 */
             .download-btn {
                 padding: 14px 20px;
                 font-size: 0.9rem;
                 letter-spacing: 0.3px;
             }
+            
+            /* 版本弹窗按钮间距优化 */
+            #versionAlertOverlay .sweet-alert-footer {
+                display: flex;
+                justify-content: center;
+                gap: 10px;
+                flex-wrap: wrap;
+            }
+            
+            #versionAlertOverlay .sweet-alert-btn {
+                margin: 0;
+                flex: 0 1 auto;
+                white-space: nowrap;
+                padding: 10px 20px;
+                min-width: 130px;
+            }
         }
-        /* PC端优化：放大字体、增加留白、修正图片大小 */
+        
+        /* PC端优化 */
         @media (min-width: 1024px) {
             .container {
-                max-width: 1000px;          /* 容器稍宽，更适合大屏幕 */
+                max-width: 1000px;
                 padding: 32px 40px;
             }
             h1 {
-                font-size: 2.5rem;           /* 更大标题 */
+                font-size: 2.5rem;
                 margin-bottom: 32px;
             }
             .warning {
-                font-size: 1.1rem;            /* 警告文字放大 */
+                font-size: 1.1rem;
                 padding: 16px 24px;
             }
             .upload-area {
-                padding: 60px 40px;           /* 增大拖拽区域 */
+                padding: 60px 40px;
             }
             .upload-area p {
-                font-size: 1.3rem;             /* 拖拽提示文字放大 */
+                font-size: 1.3rem;
                 margin: 0 0 16px 0;
             }
             .browse-btn, .fs-api-btn {
-                font-size: 1.2rem;             /* 按钮文字放大 */
-                padding: 16px 32px;             /* 增大内边距 */
+                font-size: 1.2rem;
+                padding: 16px 32px;
                 margin-top: 20px;
             }
             .fs-api-btn {
-                margin-left: 12px;               /* 与相邻按钮拉开距离 */
+                margin-left: 12px;
             }
             .process-btn, .download-btn {
-                font-size: 1.3rem;               /* 主按钮文字更大 */
+                font-size: 1.3rem;
                 padding: 18px 36px;
                 margin-top: 32px;
             }
             .status {
-                font-size: 1.1rem;               /* 状态信息放大 */
+                font-size: 1.1rem;
                 padding: 20px 24px;
                 margin-top: 32px;
             }
             .file-info {
-                font-size: 1.1rem;               /* 文件信息放大 */
+                font-size: 1.1rem;
                 padding: 20px 24px;
             }
             .progress-text {
-                font-size: 0.9rem;                /* 进度百分比稍大 */
+                font-size: 0.9rem;
                 right: 12px;
             }
             footer {
-                max-width: 1000px;                /* 与容器对齐 */
-                font-size: 1.2rem;                 /* 页脚字体明显放大 */
+                max-width: 1000px;
+                font-size: 1.2rem;
                 padding: 24px 32px;
                 margin-top: 30px;
             }
             footer a {
-                font-size: 1.2rem;                 /* 链接字体同样放大 */
+                font-size: 1.2rem;
             }
-            /* 修复页脚图片过小/变形的问题 */
+            /* 页脚图片大小调整 */
             footer img {
-                height: 1.4rem;                    /* 相对于当前文字大小，约22.4px */
-                width: auto;                        /* 保持原始宽高比 */
-                vertical-align: middle;              /* 与文字居中对齐 */
+                height: 1.4rem;
+                width: auto;
+                vertical-align: middle;
             }
             .about-btn {
                 width: 70px;
                 height: 70px;
-                font-size: 2rem;                   /* 问号按钮变大 */
+                font-size: 2rem;
                 bottom: 30px;
                 right: 30px;
             }
-            /* 弹窗也适当放大 */
+            /* 弹窗放大 */
             .sweet-alert-modal {
                 max-width: 550px;
             }
@@ -617,7 +635,7 @@ License: GPL v3.0
                 padding: 14px 40px;
             }
             .api-note.warning {
-                font-size: 1rem;                   /* 浏览器不支持提示放大 */
+                font-size: 1rem;
                 padding: 12px 16px;
             }
         }
@@ -667,15 +685,18 @@ License: GPL v3.0
         <br>
         <a href="https://github.com/ihaiming/NetEaseMC-Decryptor" target="_blank">Github</a>
         <br>
+        <a href="https://hm0.top/start-page.html" target="_blank">联系我们</a>
+        <br>
         <a href="https://hm0.top/go/mc.html" target="_blank">部署同款项目</a>
         <br>
         <a href="https://en.mc.hm0.top/" target="_blank">English Version</a>
+        <br>
     </footer>
 
-    <!-- 关于我们 -->
+    <!-- 关于我们按钮 -->
     <button class="about-btn" id="aboutBtn" title="关于我们">?</button>
 
-    <!-- SweetAlert样式弹窗 -->
+    <!-- 关于我们弹窗 -->
     <div class="sweet-alert-overlay" id="sweetAlertOverlay">
         <div class="sweet-alert-modal">
             <div class="sweet-alert-header">
@@ -683,6 +704,8 @@ License: GPL v3.0
             </div>
             <div class="sweet-alert-content">
                 本站可以一键解密网易版MC存档且完全开源，感谢您的使用！
+                <br>
+                如有问题，点击下方联系我们
                 <br>
                 <span style="color: #E65100;">To ensure our content is accessible to non-Chinese speakers, we have introduced an English version of this page. Please be advised that this English page has been machine-translated by DeepSeek. We assume no liability for any errors or ambiguities that may exist in the translation. Furthermore, please note that this project is fully compliant with the GPL v3.0 open-source license.
                 </span>
@@ -693,9 +716,49 @@ License: GPL v3.0
         </div>
     </div>
 
+    <!-- 版本更新提醒弹窗 -->
+    <div class="sweet-alert-overlay" id="versionAlertOverlay">
+        <div class="sweet-alert-modal">
+            <div class="sweet-alert-header">
+                <h2 class="sweet-alert-title">版本更新提醒</h2>
+            </div>
+            <div class="sweet-alert-content" id="versionAlertContent">
+                检测到新版本，建议更新。
+            </div>
+            <div class="sweet-alert-footer" id="versionAlertFooter">
+                <button class="sweet-alert-btn" id="versionRemindLater">24小时内不再提醒</button>
+                <button class="sweet-alert-btn" id="versionIgnoreForever">不再提醒</button>
+            </div>
+        </div>
+    </div>
+
     <script>
         (function() {
             'use strict';
+
+            // 版本检测常量
+            const CURRENT_VERSION = '1.2.0';
+            const VERSION_CHECK_URL = 'https://mc.hm0.top/upload/version.json';
+            const COOKIE_IGNORE_FOREVER = 'version_ignore_forever';
+            const COOKIE_LAST_REMIND = 'version_last_remind';
+
+            // Cookie 工具函数
+            function getCookie(name) {
+                const value = `; ${document.cookie}`;
+                const parts = value.split(`; ${name}=`);
+                if (parts.length === 2) return parts.pop().split(';').shift();
+                return null;
+            }
+
+            function setCookie(name, value, days) {
+                let expires = '';
+                if (days) {
+                    const date = new Date();
+                    date.setTime(date.getTime() + (days * 24 * 60 * 60 * 1000));
+                    expires = '; expires=' + date.toUTCString();
+                }
+                document.cookie = name + '=' + (value || '') + expires + '; path=/';
+            }
 
             document.addEventListener('DOMContentLoaded', function() {
                 const uploadArea = document.getElementById('uploadArea');
@@ -714,6 +777,12 @@ License: GPL v3.0
                 const aboutBtn = document.getElementById('aboutBtn');
                 const sweetAlertOverlay = document.getElementById('sweetAlertOverlay');
                 const sweetAlertConfirmBtn = document.getElementById('sweetAlertConfirmBtn');
+
+                // 版本更新弹窗元素
+                const versionAlertOverlay = document.getElementById('versionAlertOverlay');
+                const versionAlertContent = document.getElementById('versionAlertContent');
+                const versionRemindLater = document.getElementById('versionRemindLater');
+                const versionIgnoreForever = document.getElementById('versionIgnoreForever');
 
                 // 状态管理
                 const state = {
@@ -757,17 +826,109 @@ License: GPL v3.0
                 // 显示关于我们
                 function showAboutModal() {
                     sweetAlertOverlay.classList.add('show');
-                    document.body.style.overflow = 'hidden'; // 防止背景滚动
+                    document.body.style.overflow = 'hidden';
                 }
 
                 // 隐藏关于我们
                 function hideAboutModal() {
                     sweetAlertOverlay.classList.remove('show');
-                    document.body.style.overflow = ''; // 恢复背景滚动
+                    document.body.style.overflow = '';
                 }
 
-                // 页面加载后自动显示弹窗
+                // 页面加载后自动显示关于弹窗
                 setTimeout(showAboutModal, 800);
+
+                // 版本检测逻辑
+                function checkVersion() {
+                    // 发起版本检测
+                    fetch(VERSION_CHECK_URL, { cache: 'no-cache' })
+                        .then(response => {
+                            if (!response.ok) throw new Error('网络错误');
+                            return response.json();
+                        })
+                        .then(data => {
+                            const latestVersion = data.latest;
+
+                            // 检查永久忽略cookie：如果存在且值等于最新版本，则忽略提醒
+                            const ignoreVersion = getCookie(COOKIE_IGNORE_FOREVER);
+                            if (ignoreVersion && ignoreVersion === latestVersion) {
+                                return; // 永久忽略此版本
+                            }
+
+                            // 检查24小时内是否提醒过
+                            const lastRemind = getCookie(COOKIE_LAST_REMIND);
+                            if (lastRemind) {
+                                const last = parseInt(lastRemind, 10);
+                                const now = Date.now();
+                                if (now - last < 24 * 60 * 60 * 1000) {
+                                    return; // 24小时内已提醒
+                                }
+                            }
+
+                            if (latestVersion && latestVersion !== CURRENT_VERSION) {
+                                showVersionAlert(latestVersion, data.message || '发现新版本，建议更新以获取更好体验。', data.changelog);
+                            }
+                        })
+                        .catch(err => {
+                            console.log('版本检测失败:', err);
+                            // 静默失败
+                        });
+                }
+
+                // 显示版本更新弹窗
+                function showVersionAlert(latestVersion, message, changelogUrl) {
+                    // 设置弹窗内容
+                    let contentHtml = `<p>当前版本：${CURRENT_VERSION}<br>最新版本：${latestVersion}</p>`;
+                    contentHtml += `<p>${message}</p>`;
+                    if (changelogUrl) {
+                        contentHtml += `<p><a href="${changelogUrl}" target="_blank" style="color: var(--primary);">查看更新日志</a></p>`;
+                    }
+                    versionAlertContent.innerHTML = contentHtml;
+
+                    // 显示弹窗
+                    versionAlertOverlay.classList.add('show');
+                    document.body.style.overflow = 'hidden';
+
+                    // 移除之前绑定的按钮事件（先克隆替换以清除旧监听器）
+                    versionRemindLater.replaceWith(versionRemindLater.cloneNode(true));
+                    versionIgnoreForever.replaceWith(versionIgnoreForever.cloneNode(true));
+                    // 重新获取按钮引用
+                    const newRemindLater = document.getElementById('versionRemindLater');
+                    const newIgnoreForever = document.getElementById('versionIgnoreForever');
+
+                    // 绑定新事件，使用闭包捕获 latestVersion
+                    newRemindLater.addEventListener('click', function() {
+                        setCookie(COOKIE_LAST_REMIND, Date.now(), 1);
+                        versionAlertOverlay.classList.remove('show');
+                        document.body.style.overflow = '';
+                    });
+
+                    newIgnoreForever.addEventListener('click', function() {
+                        // 存储当前最新版本号到永久忽略cookie
+                        setCookie(COOKIE_IGNORE_FOREVER, latestVersion, 3650);
+                        versionAlertOverlay.classList.remove('show');
+                        document.body.style.overflow = '';
+                    });
+                }
+
+                // 点击弹窗外部关闭
+                versionAlertOverlay.addEventListener('click', function(e) {
+                    if (e.target === versionAlertOverlay) {
+                        versionAlertOverlay.classList.remove('show');
+                        document.body.style.overflow = '';
+                    }
+                });
+
+                // 按ESC键关闭
+                document.addEventListener('keydown', function(e) {
+                    if (e.key === 'Escape' && versionAlertOverlay.classList.contains('show')) {
+                        versionAlertOverlay.classList.remove('show');
+                        document.body.style.overflow = '';
+                    }
+                });
+
+                // 执行版本检测
+                setTimeout(checkVersion, 1000);
 
                 // 更新进度条
                 function updateProgress(percent, message) {
@@ -779,13 +940,12 @@ License: GPL v3.0
                         status.innerHTML = message + '\n进度: ' + Math.round(percentValue) + '%';
                     }
 
-                    // 调试信息
                     console.log('进度更新:', percentValue + '%', message || '');
                 }
 
                 // 事件监听
                 browseBtn.addEventListener('click', () => {
-                    fileInput.value = ''; // 清空之前的选择
+                    fileInput.value = '';
                     fileInput.click();
                 });
 
@@ -849,7 +1009,7 @@ License: GPL v3.0
                         }
 
                         fileInfo.textContent = `已选择文件夹: ${state.directoryHandle.name} (${fileCount}个文件)`;
-                        processBtn。disabled = false;
+                        processBtn.disabled = false;
                         status.innerHTML = '已选择文件夹。<span class="error">警告：解密会直接覆盖原文件，请确保已备份！</span>';
 
                     } catch (error) {
@@ -874,7 +1034,6 @@ License: GPL v3.0
 
                 function handleFileSelect(file) {
                     try {
-                        // 检查文件类型
                         const isZipFile = file.type === 'application/zip' ||
                                          file.name.toLowerCase().endsWith('.zip');
 
@@ -882,7 +1041,6 @@ License: GPL v3.0
                             status.innerHTML = '<span class="error">错误：请上传ZIP格式的存档文件<br>支持的文件格式: .zip</span>';
                             fileInfo.textContent = `文件类型错误: ${file.name}`;
 
-                            // 添加上传区域错误样式
                             uploadArea.classList.add('error-border');
                             setTimeout(() => {
                                 uploadArea.classList.remove('error-border');
@@ -892,7 +1050,6 @@ License: GPL v3.0
                             return;
                         }
 
-                        // 移除可能的错误样式
                         uploadArea.classList.remove('error-border');
 
                         state.currentFile = file;
@@ -921,7 +1078,6 @@ License: GPL v3.0
                     processBtn.disabled = true;
                     processBtn.textContent = '正在处理...';
 
-                    // 重置进度条
                     updateProgress(0, '正在初始化...');
 
                     try {
@@ -943,7 +1099,6 @@ License: GPL v3.0
                         console.error('处理过程错误:', error);
                         let errorDetail = '错误详情: ' + error.message;
 
-                        // 提供更具体的错误信息
                         if (error.message.includes('找不到CURRENT')) {
                             errorDetail = '错误：未找到CURRENT文件，请确保是有效的网易版存档或目录是"存档/db" ';
                         } else if (error.message.includes('找不到MANIFEST')) {
@@ -978,7 +1133,6 @@ License: GPL v3.0
 
                     updateProgress(15, '分析存档结构...');
 
-                    // 查找必要的文件
                     let currentFileEntry = null;
                     let manifestFileEntry = null;
                     let fileList = [];
@@ -1004,7 +1158,6 @@ License: GPL v3.0
 
                     updateProgress(25, '正在获取解密密钥...');
 
-                    // 读取CURRENT文件内容
                     let currentFileData;
                     try {
                         currentFileData = await currentFileEntry.async('uint8array');
@@ -1012,7 +1165,6 @@ License: GPL v3.0
                         throw new Error('读取CURRENT文件失败: ' + readError.message);
                     }
 
-                    // 检查文件头
                     const encryptionHeader = new Uint8Array([0x80, 0x1D, 0x30, 0x01]);
                     const isEncrypted = checkHeader(currentFileData, encryptionHeader);
 
@@ -1020,29 +1172,23 @@ License: GPL v3.0
                         throw new Error('存档未加密或使用旧版加密，无法解密');
                     }
 
-                    // 获取密钥
                     const manifestName = manifestFileEntry.name;
                     const key = await getKey(currentFileData, manifestName);
 
                     updateProgress(35, '开始解密文件...');
 
-                    // 创建新ZIP存放解密后的文件
                     const newZip = new JSZip();
                     let processedFiles = 0;
                     const totalFiles = fileList.length;
 
-                    // 处理每个文件
                     for (const zipEntry of fileList) {
                         try {
                             const fileData = await zipEntry.async('uint8array');
 
-                            // 检查是否是加密文件
                             if (checkHeader(fileData, encryptionHeader)) {
-                                // 解密文件
                                 const decryptedData = decryptFile(fileData, key);
                                 newZip.file(zipEntry.name, decryptedData);
                             } else {
-                                // 直接添加未加密文件
                                 newZip.file(zipEntry.name, fileData);
                             }
 
@@ -1052,20 +1198,17 @@ License: GPL v3.0
 
                         } catch (fileError) {
                             console.warn(`处理文件 ${zipEntry.name} 时出错:`, fileError);
-                            // 继续处理其他文件
                         }
                     }
 
                     updateProgress(95, '正在生成解密后的ZIP文件...');
 
-                    // 生成ZIP文件
                     const content = await newZip.generateAsync({
                         type: 'blob',
                         compression: 'DEFLATE',
                         compressionOptions: { level: 6 }
                     });
 
-                    // 创建下载链接
                     const url = URL.createObjectURL(content);
                     downloadBtn.href = url;
                     downloadBtn.download = state.currentFile.name.replace('.zip', '_decrypted.zip') || 'mc_decrypted.zip';
@@ -1076,7 +1219,6 @@ License: GPL v3.0
 
                     updateProgress(5, '正在扫描文件夹...');
 
-                    // 获取CURRENT和MANIFEST文件
                     let currentFileHandle, manifestFileHandle;
                     let fileHandles = [];
 
@@ -1098,11 +1240,9 @@ License: GPL v3.0
 
                     updateProgress(15, '正在读取加密信息...');
 
-                    // 读取CURRENT文件内容
                     const currentFile = await currentFileHandle.getFile();
                     const currentFileData = new Uint8Array(await currentFile.arrayBuffer());
 
-                    // 检查文件头
                     const encryptionHeader = new Uint8Array([0x80, 0x1D, 0x30, 0x01]);
                     const isEncrypted = checkHeader(currentFileData, encryptionHeader);
 
@@ -1112,13 +1252,11 @@ License: GPL v3.0
 
                     updateProgress(25, '正在获取解密密钥...');
 
-                    // 获取密钥
                     const manifestName = manifestFileHandle.name;
                     const key = await getKey(currentFileData, manifestName);
 
                     updateProgress(35, '开始解密文件...');
 
-                    // 处理文件夹中的每个文件
                     let processedFiles = 0;
                     const totalFiles = fileHandles.length;
 
@@ -1127,12 +1265,9 @@ License: GPL v3.0
                             const file = await fileHandle.getFile();
                             const fileData = new Uint8Array(await file.arrayBuffer());
 
-                            // 检查是否是加密文件
                             if (checkHeader(fileData, encryptionHeader)) {
-                                // 解密文件
                                 const decryptedData = decryptFile(fileData, key);
 
-                                // 创建新文件并写入解密后的数据
                                 const writable = await fileHandle.createWritable();
                                 await writable.write(decryptedData);
                                 await writable.close();
@@ -1144,7 +1279,6 @@ License: GPL v3.0
 
                         } catch (fileError) {
                             console.warn(`处理文件 ${fileHandle.name} 时出错:`, fileError);
-                            // 继续处理其他文件
                         }
                     }
 
@@ -1162,20 +1296,15 @@ License: GPL v3.0
                 }
 
                 async function getKey(currentFileData, manifestName) {
-                    // 移除文件头
                     const encryptedData = currentFileData.slice(4);
 
-                    // 将manifest名称转换为字节数组并添加0x0A
                     const encoder = new TextEncoder();
                     const manifestBytes = encoder.encode(manifestName);
                     const source = new Uint8Array(manifestBytes.length + 1);
                     source.set(manifestBytes);
                     source[manifestBytes.length] = 0x0A;
 
-                    // 异或操作获取密钥
                     const key = xor(encryptedData, source);
-
-                    // 优化密钥
                     return optimizeKey(key);
                 }
 
@@ -1209,10 +1338,7 @@ License: GPL v3.0
                 }
 
                 function decryptFile(fileData, key) {
-                    // 移除加密头
                     const encryptedData = fileData.slice(4);
-
-                    // 使用密钥进行异或解密
                     return xor(encryptedData, key);
                 }
             });
