@@ -4,7 +4,7 @@
 
 这是一个完全在浏览器中运行的网易版Minecraft存档解密工具，无需安装任何软件，无需上传文件到服务器，所有操作均在本地完成并且完全开源，保护用户隐私。
 
-### **近期新增**（2026年3月12日）
+### **近期新增**（2026年3月14日）
 
 - 请参阅 [CHANGELOG](CHANGELOG.md) 文件
 
@@ -45,6 +45,7 @@
 | **SEO与元信息** | 无 | ✅ 添加了 keywords、description、爬虫控制等 |
 | **浏览器兼容提示** | 仅隐藏不支持的功能按钮 | ✅ 显示明确的 API 不支持提示 |
 | **云端版本检测** | 无 | ✅ 自动检测新版本，可永久忽略指定版本，更新后再次提醒 |
+| **文件夹上传检测** | 仅依赖 API 存在检测，部分浏览器误判 | ✅ 丰富的检测手段（UA 预判 + 首次点击超时），自动识别伪支持并隐藏按钮 |
 
 ---
 
@@ -88,7 +89,7 @@ git clone https://github.com/ihaiming/NetEaseMC-Decryptor.git
 
 ```
 
-2. 直接打开 `MCDecryptor.html` 文件即可使用
+2. 直接打开 `MCDecryptor.html`（中文版）或 `MCDecryptor_EN.html`（英文版）即可使用。
 
 ## 使用方法
 
@@ -134,11 +135,14 @@ git clone https://github.com/ihaiming/NetEaseMC-Decryptor.git
 ```
 
 NetEaseMC-Decryptor/
-├── MCDecryptor.html          # 主页面
-├── README.md                 # 说明文档
-├── LICENSE                   # GPL-3.0许可证
+├── CHANGELOG.md              # 更新日志
 ├── CODE_OF_CONDUCT.md        # 行为准则（中文）
 ├── CODE_OF_CONDUCT_EN.md     # 行为准则（英文）
+├── CONTRIBUTING.md           # 贡献指南
+├── LICENSE                   # GPL-3.0许可证
+├── MCDecryptor.html          # 中文版主页面
+├── MCDecryptor_EN.html       # 英文版主页面
+└── README.md                 # 说明文档
 
 ```
 
