@@ -1,0 +1,1324 @@
+<!DOCTYPE html>
+<html lang="en">
+<!-- 
+NetEaseMCDecryptor
+GitHub: https://github.com/ihaiming/NetEaseMC-Decryptor
+License: GPL v3.0
+-->
+<head>
+    <meta charset="UTF-8">
+    <meta name="googlebot" content="index, follow">
+    <meta name="bingbot" content="index, follow">
+    <meta name="baiduspider" content="index, follow">
+    <meta name="yandex" content="noindex, nofollow">
+    <meta name="slurp" content="noindex, nofollow">
+    <meta name="yahoo" content="noindex, nofollow">
+    <meta name="ahrefsbot" content="noindex, nofollow">
+    <meta name="mj12bot" content="noindex, nofollow">
+    <meta name="semrushbot" content="noindex, nofollow">
+    <meta name="dotbot" content="noindex, nofollow">
+    <meta name="petalbot" content="noindex, nofollow">
+    <meta name="applebot" content="noindex, nofollow">
+    <meta name="facebookexternalhit" content="noindex, nofollow">
+    <meta name="twitterbot" content="noindex, nofollow">
+    <meta name="duckduckbot" content="noindex, nofollow">
+    <meta name="pinterest" content="noindex, nofollow">
+    <meta name="telegrambot" content="noindex, nofollow">
+    <meta name="exabot" content="noindex, nofollow">
+    <meta name="ccbot" content="noindex, nofollow">
+    <meta name="sosospider" content="noindex, nofollow">
+    <meta name="sogou" content="noindex, nofollow">
+    <meta name="360spider" content="noindex, nofollow">
+    <meta name="bytespider" content="noindex, nofollow">
+    <meta name="yisouspider" content="noindex, nofollow">
+    <meta name="naverbot" content="noindex, nofollow">
+    <meta name="seznambot" content="noindex, nofollow">
+    <meta http-equiv="Cache-Control" content="no-store, no-cache, must-revalidate">
+    <meta http-equiv="Pragma" content="no-cache">
+    <meta http-equiv="Expires" content="0">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta http-equiv="Cache-Control" content="no-transform">
+    <meta http-equiv="Cache-Control" content="no-siteapp">
+    <meta name="format-detection" content="telephone=no, date=no, address=no, email=no">
+    <meta name="keywords" content="NetEase Minecraft Decryption, Minecraft Decryption Tool, NetEase MC Save Decrypt, NetEase Minecraft World Decryption, NetEaseMCDecryptor, Minecraft Save File Decryption, Decrypt NetEase MC Saves, NetEase Bedrock Decryption Utility">
+    <meta name="description" content="This site can decrypt NetEase Edition Minecraft saves with one click and can also be deployed locally.">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Minecraft NetEase Edition Save Decryption Tool</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary: #6750A4;
+            --on-primary: #FFFFFF;
+            --secondary: #625B71;
+            --on-secondary: #FFFFFF;
+            --error: #B3261E;
+            --on-error: #FFFFFF;
+            --error-bg: #F9DEDC;
+            --outline: #79747E;
+            --background: #FFFBFE;
+            --on-background: #1C1B1F;
+            --surface: #FFFBFE;
+            --on-surface: #1C1B1F;
+            --surface-variant: #E7E0EC;
+            --on-surface-variant: #49454F;
+        }
+
+        body {
+            font-family: 'Roboto', sans-serif;
+            background-color: var(--background);
+            color: var(--on-background);
+            margin: 0;
+            padding: 20px;
+            line-height: 1.5;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            background-color: var(--surface);
+            border-radius: 12px;
+            padding: 24px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+            flex: 1;
+            overflow: hidden;
+        }
+
+        h1 {
+            text-align: center;
+            color: var(--primary);
+            margin-bottom: 24px;
+            font-size: 2rem;
+            font-weight: 400;
+        }
+
+        .warning {
+            background-color: #FFF3E0;
+            border: 1px solid #FFB74D;
+            border-radius: 8px;
+            padding: 12px 16px;
+            margin-bottom: 20px;
+            color: #E65100;
+            font-size: 0.9rem;
+        }
+
+        .warning strong {
+            color: #D84315;
+        }
+
+        .upload-area {
+            border: 2px dashed var(--outline);
+            border-radius: 16px;
+            padding: 40px 24px;
+            text-align: center;
+            margin-bottom: 24px;
+            transition: all 0.2s ease;
+            background-color: var(--surface-variant);
+            position: relative;
+        }
+
+        .upload-area:hover {
+            border-color: var(--primary);
+        }
+
+        .upload-area.dragover {
+            background-color: var(--surface-variant);
+            border-color: var(--primary);
+        }
+
+        .upload-area.error-border {
+            border-color: var(--error) !important;
+            border-width: 3px !important;
+            animation: pulse-error 0.5s ease-in-out;
+        }
+
+        @keyframes pulse-error {
+            0%, 100% { border-color: var(--error); }
+            50% { border-color: #FF6B6B; }
+        }
+
+        .file-input {
+            display: none;
+        }
+
+        .browse-btn {
+            background-color: var(--primary);
+            color: var(--on-primary);
+            border: none;
+            padding: 12px 24px;
+            border-radius: 100px;
+            cursor: pointer;
+            font-size: 1rem;
+            transition: all 0.2s ease;
+            margin-top: 16px;
+            font-weight: 500;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.12);
+            box-sizing: border-box;
+        }
+
+        .browse-btn:hover {
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.16);
+        }
+
+        .browse-btn:active {
+            box-shadow: 0 1px 2px rgba(0, 0, 0, 0.08);
+        }
+
+        .process-btn {
+            background-color: var(--primary);
+            color: var(--on-primary);
+            border: none;
+            padding: 16px 24px;
+            border-radius: 100px;
+            cursor: pointer;
+            font-size: 1rem;
+            transition: all 0.2s ease;
+            width: 100%;
+            margin-top: 24px;
+            font-weight: 500;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.12);
+            box-sizing: border-box;
+        }
+
+        .process-btn:hover {
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.16);
+        }
+
+        .process-btn:disabled {
+            background-color: rgba(0, 0, 0, 0.12);
+            color: rgba(0, 0, 0, 0.38);
+            cursor: not-allowed;
+            box-shadow: none;
+        }
+
+        .status {
+            margin-top: 24px;
+            padding: 16px;
+            border-radius: 12px;
+            background-color: var(--surface-variant);
+            text-align: left;
+            min-height: 20px;
+            font-size: 0.875rem;
+            white-space: pre-wrap;
+            word-break: break-word;
+        }
+
+        .progress {
+            height: 8px;
+            background-color: var(--surface-variant);
+            border-radius: 4px;
+            margin-top: 24px;
+            overflow: hidden;
+            position: relative;
+        }
+
+        .progress-bar {
+            height: 100%;
+            background-color: var(--primary);
+            border-radius: 4px;
+            width: 0%;
+            transition: width 0.3s ease;
+        }
+
+        .progress-text {
+            position: absolute;
+            right: 8px;
+            top: 50%;
+            transform: translateY(-50%);
+            font-size: 0.75rem;
+            color: var(--on-surface-variant);
+        }
+
+        .success {
+            color: var(--primary);
+            font-weight: 500;
+        }
+
+        .error {
+            color: var(--error);
+            font-weight: 500;
+            background-color: var(--error-bg);
+            border: 1px solid var(--error);
+            padding: 8px 12px;
+            border-radius: 4px;
+            margin-top: 4px;
+            display: inline-block;
+        }
+
+        .file-info {
+            margin-top: 16px;
+            padding: 16px;
+            background-color: var(--surface-variant);
+            border-radius: 12px;
+            font-size: 0.875rem;
+        }
+
+        .download-btn {
+            background-color: var(--primary);
+            color: var(--on-primary);
+            border: none;
+            padding: 16px 24px;
+            border-radius: 100px;
+            cursor: pointer;
+            font-size: 1rem;
+            transition: all 0.2s ease;
+            width: 100%;
+            margin-top: 24px;
+            font-weight: 500;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.12);
+            text-decoration: none;
+            display: none;
+            text-align: center;
+            box-sizing: border-box;
+            max-width: 100%;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .download-btn:hover {
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.16);
+        }
+
+        .card {
+            background-color: var(--surface);
+            border-radius: 12px;
+            padding: 16px;
+            margin-bottom: 16px;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1), 0 1px 2px rgba(0, 0, 0, 0.06);
+        }
+
+        .fs-api-btn {
+            background-color: var(--secondary);
+            color: var(--on-secondary);
+            border: none;
+            padding: 12px 24px;
+            border-radius: 100px;
+            cursor: pointer;
+            font-size: 1rem;
+            transition: all 0.2s ease;
+            margin-top: 16px;
+            font-weight: 500;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.12);
+            display: none;
+            box-sizing: border-box;
+        }
+
+        .fs-api-btn:hover {
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.16);
+        }
+
+        .api-note {
+            font-size: 0.75rem;
+            color: #666;
+            margin-top: 4px;
+        }
+
+        .api-note.warning {
+            color: #B3261E;
+            font-weight: bold;
+            background-color: #F9DEDC;
+            padding: 8px 12px;
+            border-radius: 4px;
+            display: inline-block;
+            margin-top: 12px;
+        }
+
+        /* Footer styles (simple, no extra icons) */
+        footer {
+            max-width: 800px;
+            margin: 20px auto 0;
+            padding: 16px 24px;
+            text-align: center;
+            color: var(--on-surface-variant);
+            font-size: 0.875rem;
+            border-top: 1px solid var(--surface-variant);
+        }
+
+        footer a {
+            color: var(--primary);
+            text-decoration: none;
+            transition: color 0.2s ease;
+        }
+
+        footer a:hover {
+            text-decoration: underline;
+            color: #5a4793;
+        }
+
+        /* SweetAlert-style popup */
+        .sweet-alert-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.5);
+            display: none;
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+
+        .sweet-alert-overlay.show {
+            display: flex;
+            opacity: 1;
+        }
+
+        .sweet-alert-modal {
+            background-color: var(--surface);
+            border-radius: 20px;
+            width: 90%;
+            max-width: 400px;
+            overflow: hidden;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+            transform: scale(0.7);
+            transition: transform 0.3s ease;
+            animation: sweetAlertIn 0.3s ease forwards;
+        }
+
+        .sweet-alert-overlay.show .sweet-alert-modal {
+            transform: scale(1);
+        }
+
+        @keyframes sweetAlertIn {
+            0% {
+                transform: scale(0.7);
+                opacity: 0;
+            }
+            100% {
+                transform: scale(1);
+                opacity: 1;
+            }
+        }
+
+        .sweet-alert-header {
+            padding: 24px 24px 8px 24px;
+            text-align: center;
+        }
+
+        .sweet-alert-title {
+            color: var(--on-surface);
+            font-size: 1.5rem;
+            font-weight: 500;
+            margin: 0;
+        }
+
+        .sweet-alert-content {
+            padding: 8px 24px 24px 24px;
+            text-align: center;
+            color: var(--on-surface-variant);
+            font-size: 1rem;
+            line-height: 1.5;
+        }
+
+        .sweet-alert-footer {
+            padding: 16px 24px 24px 24px;
+            text-align: center;
+            border-top: 1px solid var(--surface-variant);
+        }
+
+        .sweet-alert-btn {
+            background-color: var(--primary);
+            color: var(--on-primary);
+            border: none;
+            padding: 12px 32px;
+            border-radius: 100px;
+            cursor: pointer;
+            font-size: 1rem;
+            font-weight: 500;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            transition: all 0.2s ease;
+            min-width: 120px;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.12);
+            box-sizing: border-box;
+            margin: 0 5px;
+        }
+
+        .sweet-alert-btn:hover {
+            background-color: #5a4793;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.16);
+        }
+
+        .sweet-alert-btn:active {
+            transform: scale(0.98);
+        }
+
+        /* About us button */
+        .about-btn {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            background-color: var(--primary);
+            color: var(--on-primary);
+            border: none;
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            cursor: pointer;
+            font-size: 1rem;
+            font-weight: 500;
+            box-shadow: 0 4px 12px rgba(103, 80, 164, 0.3);
+            transition: all 0.2s ease;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 100;
+        }
+
+        .about-btn:hover {
+            background-color: #5a4793;
+            box-shadow: 0 6px 16px rgba(103, 80, 164, 0.4);
+            transform: translateY(-2px);
+        }
+
+        .about-btn:active {
+            transform: translateY(0);
+        }
+
+        /* Mobile optimizations */
+        @media (max-width: 600px) {
+            .container {
+                margin: 0;
+                padding: 16px;
+            }
+            body {
+                padding: 10px;
+            }
+            h1 {
+                font-size: 1.5rem;
+            }
+            .upload-area {
+                padding: 32px 16px;
+            }
+            footer {
+                padding: 16px;
+                margin-top: 16px;
+            }
+            .sweet-alert-modal {
+                width: 95%;
+                max-width: 350px;
+            }
+            .about-btn {
+                bottom: 15px;
+                right: 15px;
+                width: 45px;
+                height: 45px;
+            }
+            .download-btn {
+                padding: 14px 20px;
+                font-size: 0.9rem;
+                letter-spacing: 0.3px;
+            }
+            #versionAlertOverlay .sweet-alert-footer {
+                display: flex;
+                justify-content: center;
+                gap: 10px;
+                flex-wrap: wrap;
+            }
+            #versionAlertOverlay .sweet-alert-btn {
+                margin: 0;
+                flex: 0 1 auto;
+                white-space: nowrap;
+                padding: 10px 20px;
+                min-width: 130px;
+            }
+        }
+
+        /* PC optimizations */
+        @media (min-width: 1024px) {
+            .container {
+                max-width: 1000px;
+                padding: 32px 40px;
+            }
+            h1 {
+                font-size: 2.5rem;
+                margin-bottom: 32px;
+            }
+            .warning {
+                font-size: 1.1rem;
+                padding: 16px 24px;
+            }
+            .upload-area {
+                padding: 60px 40px;
+            }
+            .upload-area p {
+                font-size: 1.3rem;
+                margin: 0 0 16px 0;
+            }
+            .browse-btn, .fs-api-btn {
+                font-size: 1.2rem;
+                padding: 16px 32px;
+                margin-top: 20px;
+            }
+            .fs-api-btn {
+                margin-left: 12px;
+            }
+            .process-btn, .download-btn {
+                font-size: 1.3rem;
+                padding: 18px 36px;
+                margin-top: 32px;
+            }
+            .status {
+                font-size: 1.1rem;
+                padding: 20px 24px;
+                margin-top: 32px;
+            }
+            .file-info {
+                font-size: 1.1rem;
+                padding: 20px 24px;
+            }
+            .progress-text {
+                font-size: 0.9rem;
+                right: 12px;
+            }
+            footer {
+                max-width: 1000px;
+                font-size: 1.2rem;
+                padding: 24px 32px;
+                margin-top: 30px;
+            }
+            footer a {
+                font-size: 1.2rem;
+            }
+            footer img {
+                height: 1.4rem;
+                width: auto;
+                vertical-align: middle;
+            }
+            .about-btn {
+                width: 70px;
+                height: 70px;
+                font-size: 2rem;
+                bottom: 30px;
+                right: 30px;
+            }
+            .sweet-alert-modal {
+                max-width: 550px;
+            }
+            .sweet-alert-title {
+                font-size: 2.2rem;
+            }
+            .sweet-alert-content {
+                font-size: 1.3rem;
+                padding: 16px 32px 32px;
+            }
+            .sweet-alert-btn {
+                font-size: 1.2rem;
+                padding: 14px 40px;
+            }
+            .api-note.warning {
+                font-size: 1rem;
+                padding: 12px 16px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Minecraft NetEase Edition Save Decryption Tool</h1>
+
+        <div class="warning">
+            <strong>Important Reminder:</strong><br>
+            1. When using the "Select Folder" function for decryption, original files will be overwritten directly! Please make sure to back up your saves, especially the "/db" directory!<br>
+            2. The decryption process is completely performed locally in your browser; files are not uploaded to any server.<br>
+            3. To decrypt ZIP files, please compress all files in the "/db" directory and upload the ZIP file. It is recommended to use "Store" compression level.<br>
+            <span style="color: red; font-size: large; font-weight: bold;">Please be advised that this English page has been machine-translated using DeepSeek. We assume no liability for any errors or ambiguities that may exist in the translation. Additionally, this project is fully compliant with the GPL v3.0 open-source license.</span>
+        </div>
+
+        <div class="card">
+            <div class="upload-area" id="uploadArea">
+                <p>Drag and drop ZIP file here or</p>
+                <input type="file" id="fileInput" class="file-input" accept=".zip">
+                <button class="browse-btn" id="browseBtn">Select ZIP File</button>
+                <button class="fs-api-btn" id="fsApiBtn">Select Folder (Experimental)</button>
+                <div id="apiNoteContainer"></div>
+            </div>
+            <div class="file-info" id="fileInfo">
+                No file selected
+            </div>
+
+            <div class="progress">
+                <div class="progress-bar" id="progressBar"></div>
+                <span class="progress-text" id="progressText">0%</span>
+            </div>
+
+            <div class="status" id="status">
+                Waiting for operation...
+            </div>
+
+            <button class="process-btn" id="processBtn" disabled>Start Decryption</button>
+            <a class="download-btn" id="downloadBtn">Download Decrypted Save</a>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer>
+        <a href="https://www.gnu.org/licenses/gpl-3.0" target="_blank" rel="license noopener noreferrer">
+            <img src="https://img.shields.io/badge/License-GPLv3-blue.svg" alt="License: GPL v3"></a>
+        <br>
+        <a href="https://hm0.top/start-page.html" target="_blank">Contact Us</a>
+        <br>
+        <a href="https://hm0.top/go/mc.html" target="_blank">Deploy the same project</a>
+    </footer>
+
+    <!-- About Us Button -->
+    <button class="about-btn" id="aboutBtn" title="About Us">?</button>
+
+    <!-- About Us Popup -->
+    <div class="sweet-alert-overlay" id="sweetAlertOverlay">
+        <div class="sweet-alert-modal">
+            <div class="sweet-alert-header">
+                <h2 class="sweet-alert-title">About Us</h2>
+            </div>
+            <div class="sweet-alert-content"> This site can decrypt NetEase Edition Minecraft saves with one click and is completely open source. Thank you for using it! <br> Click "Contact Us" below <br> <small style="font-style: italic; color: #666;">Please be advised that this English page has been machine-translated by DeepSeek. We assume no liability for any errors or ambiguities that may exist in the translation. Furthermore, please note that this project is fully compliant with the GPL v3.0 open-source license.</small> </div>
+            <div class="sweet-alert-footer">
+                <button class="sweet-alert-btn" id="sweetAlertConfirmBtn">OK</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Version Update Popup -->
+    <div class="sweet-alert-overlay" id="versionAlertOverlay">
+        <div class="sweet-alert-modal">
+            <div class="sweet-alert-header">
+                <h2 class="sweet-alert-title">Version Update Reminder</h2>
+            </div>
+            <div class="sweet-alert-content" id="versionAlertContent">
+                A new version is available.
+            </div>
+            <div class="sweet-alert-footer" id="versionAlertFooter">
+                <button class="sweet-alert-btn" id="versionRemindLater">Remind me later (24h)</button>
+                <button class="sweet-alert-btn" id="versionIgnoreForever">Don't remind again</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        (function() {
+            'use strict';
+
+            // Version check constants
+            const CURRENT_VERSION = '1.2.0';
+            const VERSION_CHECK_URL = 'https://mc.hm0.top/upload/version.json';
+            const COOKIE_IGNORE_FOREVER = 'version_ignore_forever';
+            const COOKIE_LAST_REMIND = 'version_last_remind';
+
+            // Cookie utility functions
+            function getCookie(name) {
+                const value = `; ${document.cookie}`;
+                const parts = value.split(`; ${name}=`);
+                if (parts.length === 2) return parts.pop().split(';').shift();
+                return null;
+            }
+
+            function setCookie(name, value, days) {
+                let expires = '';
+                if (days) {
+                    const date = new Date();
+                    date.setTime(date.getTime() + (days * 24 * 60 * 60 * 1000));
+                    expires = '; expires=' + date.toUTCString();
+                }
+                document.cookie = name + '=' + (value || '') + expires + '; path=/';
+            }
+
+            document.addEventListener('DOMContentLoaded', function() {
+                const uploadArea = document.getElementById('uploadArea');
+                const fileInput = document.getElementById('fileInput');
+                const browseBtn = document.getElementById('browseBtn');
+                const fsApiBtn = document.getElementById('fsApiBtn');
+                const apiNoteContainer = document.getElementById('apiNoteContainer');
+                const fileInfo = document.getElementById('fileInfo');
+                const processBtn = document.getElementById('processBtn');
+                const status = document.getElementById('status');
+                const progressBar = document.getElementById('progressBar');
+                const progressText = document.getElementById('progressText');
+                const downloadBtn = document.getElementById('downloadBtn');
+
+                // About Us elements
+                const aboutBtn = document.getElementById('aboutBtn');
+                const sweetAlertOverlay = document.getElementById('sweetAlertOverlay');
+                const sweetAlertConfirmBtn = document.getElementById('sweetAlertConfirmBtn');
+
+                // Version update popup elements
+                const versionAlertOverlay = document.getElementById('versionAlertOverlay');
+                const versionAlertContent = document.getElementById('versionAlertContent');
+                const versionRemindLater = document.getElementById('versionRemindLater');
+                const versionIgnoreForever = document.getElementById('versionIgnoreForever');
+
+                // State management
+                const state = {
+                    currentFile: null,
+                    directoryHandle: null,
+                    useFileSystemAPI: false,
+                    isProcessing: false
+                };
+
+                // Check if browser supports File System Access API
+                const isFsApiSupported = 'showDirectoryPicker' in window;
+
+                if (isFsApiSupported) {
+                    fsApiBtn.style.display = 'inline-block';
+                } else {
+                    // Show note in browsers that don't support FS API
+                    const unsupportedNote = document.createElement('p');
+                    unsupportedNote.className = 'api-note warning';
+                    unsupportedNote.innerHTML = '⚠️ Current browser does not support folder selection. Please use the ZIP file upload feature.';
+                    apiNoteContainer.appendChild(unsupportedNote);
+                }
+
+                // About Us functionality
+                aboutBtn.addEventListener('click', showAboutModal);
+                sweetAlertConfirmBtn.addEventListener('click', hideAboutModal);
+
+                // Click outside popup to close it
+                sweetAlertOverlay.addEventListener('click', function(e) {
+                    if (e.target === sweetAlertOverlay) {
+                        hideAboutModal();
+                    }
+                });
+
+                // Press ESC to close popup
+                document.addEventListener('keydown', function(e) {
+                    if (e.key === 'Escape' && sweetAlertOverlay.classList.contains('show')) {
+                        hideAboutModal();
+                    }
+                });
+
+                // Show About Us
+                function showAboutModal() {
+                    sweetAlertOverlay.classList.add('show');
+                    document.body.style.overflow = 'hidden';
+                }
+
+                // Hide About Us
+                function hideAboutModal() {
+                    sweetAlertOverlay.classList.remove('show');
+                    document.body.style.overflow = '';
+                }
+
+                // Show About Us popup automatically after page load
+                setTimeout(showAboutModal, 800);
+
+                // Version check logic
+                function checkVersion() {
+                    fetch(VERSION_CHECK_URL, { cache: 'no-cache' })
+                        .then(response => {
+                            if (!response.ok) throw new Error('Network error');
+                            return response.json();
+                        })
+                        .then(data => {
+                            const latestVersion = data.latest;
+
+                            // Check if this version is permanently ignored
+                            const ignoreVersion = getCookie(COOKIE_IGNORE_FOREVER);
+                            if (ignoreVersion && ignoreVersion === latestVersion) {
+                                return; // Permanently ignore this version
+                            }
+
+                            // Check if reminded within 24 hours
+                            const lastRemind = getCookie(COOKIE_LAST_REMIND);
+                            if (lastRemind) {
+                                const last = parseInt(lastRemind, 10);
+                                const now = Date.now();
+                                if (now - last < 24 * 60 * 60 * 1000) {
+                                    return; // Reminded within last 24h
+                                }
+                            }
+
+                            if (latestVersion && latestVersion !== CURRENT_VERSION) {
+                                showVersionAlert(latestVersion, data.message || 'A new version is available. It is recommended to update.', data.changelog);
+                            }
+                        })
+                        .catch(err => {
+                            console.log('Version check failed:', err);
+                            // Silently fail
+                        });
+                }
+
+                // Show version update popup
+                function showVersionAlert(latestVersion, message, changelogUrl) {
+                    let contentHtml = `<p>Current version: ${CURRENT_VERSION}<br>Latest version: ${latestVersion}</p>`;
+                    contentHtml += `<p>${message}</p>`;
+                    if (changelogUrl) {
+                        contentHtml += `<p><a href="${changelogUrl}" target="_blank" style="color: var(--primary);">View changelog</a></p>`;
+                    }
+                    versionAlertContent.innerHTML = contentHtml;
+
+                    versionAlertOverlay.classList.add('show');
+                    document.body.style.overflow = 'hidden';
+
+                    // Remove old event listeners by cloning and replacing
+                    versionRemindLater.replaceWith(versionRemindLater.cloneNode(true));
+                    versionIgnoreForever.replaceWith(versionIgnoreForever.cloneNode(true));
+
+                    const newRemindLater = document.getElementById('versionRemindLater');
+                    const newIgnoreForever = document.getElementById('versionIgnoreForever');
+
+                    newRemindLater.addEventListener('click', function() {
+                        setCookie(COOKIE_LAST_REMIND, Date.now(), 1);
+                        versionAlertOverlay.classList.remove('show');
+                        document.body.style.overflow = '';
+                    });
+
+                    newIgnoreForever.addEventListener('click', function() {
+                        setCookie(COOKIE_IGNORE_FOREVER, latestVersion, 3650);
+                        versionAlertOverlay.classList.remove('show');
+                        document.body.style.overflow = '';
+                    });
+                }
+
+                // Click outside popup to close
+                versionAlertOverlay.addEventListener('click', function(e) {
+                    if (e.target === versionAlertOverlay) {
+                        versionAlertOverlay.classList.remove('show');
+                        document.body.style.overflow = '';
+                    }
+                });
+
+                // Press ESC to close
+                document.addEventListener('keydown', function(e) {
+                    if (e.key === 'Escape' && versionAlertOverlay.classList.contains('show')) {
+                        versionAlertOverlay.classList.remove('show');
+                        document.body.style.overflow = '';
+                    }
+                });
+
+                // Execute version check
+                setTimeout(checkVersion, 1000);
+
+                // Update progress bar
+                function updateProgress(percent, message) {
+                    const percentValue = Math.min(100, Math.max(0, percent));
+                    progressBar.style.width = percentValue + '%';
+                    progressText.textContent = Math.round(percentValue) + '%';
+
+                    if (message) {
+                        status.innerHTML = message + '\nProgress: ' + Math.round(percentValue) + '%';
+                    }
+
+                    console.log('Progress update:', percentValue + '%', message || '');
+                }
+
+                // Event listeners
+                browseBtn.addEventListener('click', () => {
+                    fileInput.value = '';
+                    fileInput.click();
+                });
+
+                fsApiBtn.addEventListener('click', selectDirectory);
+
+                fileInput.addEventListener('change', (e) => {
+                    if (e.target.files.length > 0) {
+                        state.useFileSystemAPI = false;
+                        handleFileSelect(e.target.files[0]);
+                    }
+                });
+
+                uploadArea.addEventListener('dragover', (e) => {
+                    e.preventDefault();
+                    uploadArea.classList.add('dragover');
+                });
+
+                uploadArea.addEventListener('dragleave', () => {
+                    uploadArea.classList.remove('dragover');
+                });
+
+                uploadArea.addEventListener('drop', (e) => {
+                    e.preventDefault();
+                    uploadArea.classList.remove('dragover');
+
+                    if (e.dataTransfer.files.length > 0) {
+                        state.useFileSystemAPI = false;
+                        handleFileSelect(e.dataTransfer.files[0]);
+                    }
+                });
+
+                processBtn.addEventListener('click', startProcessing);
+
+                async function selectDirectory() {
+                    try {
+                        if (!isFsApiSupported) {
+                            throw new Error('Current browser does not support folder selection API');
+                        }
+
+                        state.directoryHandle = await window.showDirectoryPicker();
+                        state.useFileSystemAPI = true;
+
+                        // Check if directory has CURRENT and MANIFEST files
+                        let hasCurrent = false;
+                        let hasManifest = false;
+                        let fileCount = 0;
+
+                        for await (const entry of state.directoryHandle.values()) {
+                            if (entry.kind === 'file') {
+                                fileCount++;
+                                if (entry.name === 'CURRENT') hasCurrent = true;
+                                if (entry.name.startsWith('MANIFEST')) hasManifest = true;
+                            }
+                        }
+
+                        if (!hasCurrent || !hasManifest) {
+                            status.innerHTML = '<span class="error">Error: Selected folder is missing CURRENT or MANIFEST files. Please ensure this is a NetEase Edition MC save directory or the directory is "/db" </span>';
+                            fileInfo.textContent = 'Invalid folder: Missing required files';
+                            processBtn.disabled = true;
+                            return;
+                        }
+
+                        fileInfo.textContent = `Folder selected: ${state.directoryHandle.name} (${fileCount} files)`;
+                        processBtn.disabled = false;
+                        status.innerHTML = 'Folder selected.<span class="error"> Warning: Decryption will overwrite original files directly. Please ensure you have backups!</span>';
+
+                    } catch (error) {
+                        console.error('Error selecting directory:', error);
+                        let errorMsg = 'Failed to select folder: ';
+
+                        if (error.name === 'AbortError') {
+                            errorMsg += 'User cancelled selection';
+                        } else if (error.name === 'SecurityError') {
+                            errorMsg += 'Security restrictions. Please check browser permissions';
+                        } else if (error.message.includes('not supported')) {
+                            errorMsg += 'Browser does not support this feature';
+                        } else {
+                            errorMsg += error.message;
+                        }
+
+                        status.innerHTML = '<span class="error">' + errorMsg + '</span>';
+                        fileInfo.textContent = 'Failed to select folder';
+                        processBtn.disabled = true;
+                    }
+                }
+
+                function handleFileSelect(file) {
+                    try {
+                        const isZipFile = file.type === 'application/zip' ||
+                                         file.name.toLowerCase().endsWith('.zip');
+
+                        if (!isZipFile) {
+                            status.innerHTML = '<span class="error">Error: Please upload a ZIP format save file<br>Supported file format: .zip</span>';
+                            fileInfo.textContent = `Wrong file type: ${file.name}`;
+
+                            uploadArea.classList.add('error-border');
+                            setTimeout(() => {
+                                uploadArea.classList.remove('error-border');
+                            }, 3000);
+
+                            processBtn.disabled = true;
+                            return;
+                        }
+
+                        uploadArea.classList.remove('error-border');
+
+                        state.currentFile = file;
+                        fileInfo.textContent = `Selected: ${file.name} (${formatFileSize(file.size)})`;
+                        processBtn.disabled = false;
+                        status.textContent = 'ZIP file ready. Click "Start Decryption" button';
+
+                    } catch (error) {
+                        console.error('File selection error:', error);
+                        status.innerHTML = '<span class="error">Error: ' + error.message + '</span>';
+                        fileInfo.textContent = 'File selection failed';
+                        processBtn.disabled = true;
+                    }
+                }
+
+                function formatFileSize(bytes) {
+                    if (bytes < 1024) return bytes + ' B';
+                    else if (bytes < 1048576) return (bytes / 1024).toFixed(2) + ' KB';
+                    else return (bytes / 1048576).toFixed(2) + ' MB';
+                }
+
+                async function startProcessing() {
+                    if ((!state.currentFile && !state.directoryHandle) || state.isProcessing) return;
+
+                    state.isProcessing = true;
+                    processBtn.disabled = true;
+                    processBtn.textContent = 'Processing...';
+
+                    updateProgress(0, 'Initializing...');
+
+                    try {
+                        if (state.useFileSystemAPI) {
+                            await processDirectory();
+                        } else {
+                            await processZipFile();
+                        }
+
+                        updateProgress(100, 'Decryption complete!');
+                        status.innerHTML = '<span class="success">✓ Decryption complete!</span>';
+
+                        if (!state.useFileSystemAPI) {
+                            downloadBtn.style.display = 'block';
+                            downloadBtn.scrollIntoView({ behavior: 'smooth' });
+                        }
+
+                    } catch (error) {
+                        console.error('Processing error:', error);
+                        let errorDetail = 'Error details: ' + error.message;
+
+                        if (error.message.includes('CURRENT not found')) {
+                            errorDetail = 'Error: CURRENT file not found. Please ensure this is a valid NetEase Edition save or the directory is "/db" ';
+                        } else if (error.message.includes('MANIFEST not found')) {
+                            errorDetail = 'Error: MANIFEST file not found. Please ensure this is a valid NetEase Edition save or the directory is "/db" ';
+                        } else if (error.message.includes('not encrypted')) {
+                            errorDetail = 'Error: This save is not encrypted or uses an unsupported encryption format';
+                        } else if (error.message.includes('ZIP file')) {
+                            errorDetail = 'Error: Failed to read ZIP file. The file may be corrupted';
+                        }
+
+                        status.innerHTML = '<span class="error">' + errorDetail + '</span>';
+                        updateProgress(0, 'Processing failed');
+
+                    } finally {
+                        processBtn.disabled = false;
+                        processBtn.textContent = 'Start Decryption';
+                        state.isProcessing = false;
+                    }
+                }
+
+                async function processZipFile() {
+                    if (!state.currentFile) throw new Error('No file selected');
+
+                    updateProgress(5, 'Reading ZIP file...');
+
+                    let zip;
+                    try {
+                        zip = await JSZip.loadAsync(state.currentFile);
+                    } catch (zipError) {
+                        throw new Error('Failed to read ZIP file: ' + zipError.message);
+                    }
+
+                    updateProgress(15, 'Analyzing save structure...');
+
+                    let currentFileEntry = null;
+                    let manifestFileEntry = null;
+                    let fileList = [];
+
+                    zip.forEach((relativePath, zipEntry) => {
+                        if (zipEntry.dir) return;
+                        fileList.push(zipEntry);
+
+                        if (relativePath === 'CURRENT') {
+                            currentFileEntry = zipEntry;
+                        } else if (relativePath.startsWith('MANIFEST')) {
+                            manifestFileEntry = zipEntry;
+                        }
+                    });
+
+                    if (!currentFileEntry) {
+                        throw new Error('CURRENT file not found. This may not be a valid NetEase Edition save');
+                    }
+
+                    if (!manifestFileEntry) {
+                        throw new Error('MANIFEST file not found. This may not be a valid NetEase Edition save');
+                    }
+
+                    updateProgress(25, 'Getting decryption key...');
+
+                    let currentFileData;
+                    try {
+                        currentFileData = await currentFileEntry.async('uint8array');
+                    } catch (readError) {
+                        throw new Error('Failed to read CURRENT file: ' + readError.message);
+                    }
+
+                    const encryptionHeader = new Uint8Array([0x80, 0x1D, 0x30, 0x01]);
+                    const isEncrypted = checkHeader(currentFileData, encryptionHeader);
+
+                    if (!isEncrypted) {
+                        throw new Error('Save is not encrypted or uses old encryption, cannot decrypt');
+                    }
+
+                    const manifestName = manifestFileEntry.name;
+                    const key = await getKey(currentFileData, manifestName);
+
+                    updateProgress(35, 'Starting file decryption...');
+
+                    const newZip = new JSZip();
+                    let processedFiles = 0;
+                    const totalFiles = fileList.length;
+
+                    for (const zipEntry of fileList) {
+                        try {
+                            const fileData = await zipEntry.async('uint8array');
+
+                            if (checkHeader(fileData, encryptionHeader)) {
+                                const decryptedData = decryptFile(fileData, key);
+                                newZip.file(zipEntry.name, decryptedData);
+                            } else {
+                                newZip.file(zipEntry.name, fileData);
+                            }
+
+                            processedFiles++;
+                            const progress = 35 + (processedFiles / totalFiles) * 55;
+                            updateProgress(progress, `Processing file: ${processedFiles}/${totalFiles}`);
+
+                        } catch (fileError) {
+                            console.warn(`Error processing file ${zipEntry.name}:`, fileError);
+                        }
+                    }
+
+                    updateProgress(95, 'Generating decrypted ZIP file...');
+
+                    const content = await newZip.generateAsync({
+                        type: 'blob',
+                        compression: 'DEFLATE',
+                        compressionOptions: { level: 6 }
+                    });
+
+                    const url = URL.createObjectURL(content);
+                    downloadBtn.href = url;
+                    downloadBtn.download = state.currentFile.name.replace('.zip', '_decrypted.zip') || 'mc_decrypted.zip';
+                }
+
+                async function processDirectory() {
+                    if (!state.directoryHandle) throw new Error('No folder selected');
+
+                    updateProgress(5, 'Scanning folder...');
+
+                    let currentFileHandle, manifestFileHandle;
+                    let fileHandles = [];
+
+                    for await (const entry of state.directoryHandle.values()) {
+                        if (entry.kind === 'file') {
+                            fileHandles.push(entry);
+                            if (entry.name === 'CURRENT') currentFileHandle = entry;
+                            if (entry.name.startsWith('MANIFEST')) manifestFileHandle = entry;
+                        }
+                    }
+
+                    if (!currentFileHandle) {
+                        throw new Error('CURRENT file not found');
+                    }
+
+                    if (!manifestFileHandle) {
+                        throw new Error('MANIFEST file not found');
+                    }
+
+                    updateProgress(15, 'Reading encryption information...');
+
+                    const currentFile = await currentFileHandle.getFile();
+                    const currentFileData = new Uint8Array(await currentFile.arrayBuffer());
+
+                    const encryptionHeader = new Uint8Array([0x80, 0x1D, 0x30, 0x01]);
+                    const isEncrypted = checkHeader(currentFileData, encryptionHeader);
+
+                    if (!isEncrypted) {
+                        throw new Error('Save is not encrypted or uses old encryption, cannot decrypt');
+                    }
+
+                    updateProgress(25, 'Getting decryption key...');
+
+                    const manifestName = manifestFileHandle.name;
+                    const key = await getKey(currentFileData, manifestName);
+
+                    updateProgress(35, 'Starting file decryption...');
+
+                    let processedFiles = 0;
+                    const totalFiles = fileHandles.length;
+
+                    for (const fileHandle of fileHandles) {
+                        try {
+                            const file = await fileHandle.getFile();
+                            const fileData = new Uint8Array(await file.arrayBuffer());
+
+                            if (checkHeader(fileData, encryptionHeader)) {
+                                const decryptedData = decryptFile(fileData, key);
+
+                                const writable = await fileHandle.createWritable();
+                                await writable.write(decryptedData);
+                                await writable.close();
+                            }
+
+                            processedFiles++;
+                            const progress = 35 + (processedFiles / totalFiles) * 55;
+                            updateProgress(progress, `Processing file: ${processedFiles}/${totalFiles}`);
+
+                        } catch (fileError) {
+                            console.warn(`Error processing file ${fileHandle.name}:`, fileError);
+                        }
+                    }
+
+                    updateProgress(100, 'Folder decryption complete!');
+                }
+
+                function checkHeader(fileData, header) {
+                    if (fileData.length < header.length) return false;
+
+                    for (let i = 0; i < header.length; i++) {
+                        if (fileData[i] !== header[i]) return false;
+                    }
+
+                    return true;
+                }
+
+                async function getKey(currentFileData, manifestName) {
+                    const encryptedData = currentFileData.slice(4);
+
+                    const encoder = new TextEncoder();
+                    const manifestBytes = encoder.encode(manifestName);
+                    const source = new Uint8Array(manifestBytes.length + 1);
+                    source.set(manifestBytes);
+                    source[manifestBytes.length] = 0x0A;
+
+                    const key = xor(encryptedData, source);
+                    return optimizeKey(key);
+                }
+
+                function xor(data, key) {
+                    const result = new Uint8Array(data.length);
+                    for (let i = 0; i < data.length; i++) {
+                        result[i] = data[i] ^ key[i % key.length];
+                    }
+                    return result;
+                }
+
+                function optimizeKey(key) {
+                    if (key.length === 16) {
+                        const firstHalf = key.slice(0, 8);
+                        const secondHalf = key.slice(8, 16);
+
+                        let isSame = true;
+                        for (let i = 0; i < 8; i++) {
+                            if (firstHalf[i] !== secondHalf[i]) {
+                                isSame = false;
+                                break;
+                            }
+                        }
+
+                        if (isSame) {
+                            return firstHalf;
+                        }
+                    }
+
+                    return key;
+                }
+
+                function decryptFile(fileData, key) {
+                    const encryptedData = fileData.slice(4);
+                    return xor(encryptedData, key);
+                }
+            });
+        })();
+    </script>
+</body>
+<!-- 
+NetEaseMCDecryptor
+GitHub: https://github.com/ihaiming/NetEaseMC-Decryptor
+License: GPL v3.0
+-->
+</html>
