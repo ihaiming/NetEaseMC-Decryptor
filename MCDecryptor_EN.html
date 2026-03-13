@@ -685,7 +685,13 @@ License: GPL v3.0
             <div class="sweet-alert-header">
                 <h2 class="sweet-alert-title">About Us</h2>
             </div>
-            <div class="sweet-alert-content"> This site can decrypt NetEase Edition Minecraft saves with one click and is completely open source. Thank you for using it! <br> Click "Contact Us" below <br> <small style="font-style: italic; color: #666;">Please be advised that this English page has been machine-translated by DeepSeek. We assume no liability for any errors or ambiguities that may exist in the translation. Furthermore, please note that this project is fully compliant with the GPL v3.0 open-source license.</small> </div>
+            <div class="sweet-alert-content">
+                This site can decrypt NetEase Edition Minecraft saves with one click and is completely open source. Thank you for using it!
+                <br>
+                Click "Contact Us" below
+                <br>
+                <small style="font-style: italic; color: #666;">Please be advised that this English page has been machine-translated by DeepSeek. We assume no liability for any errors or ambiguities that may exist in the translation. Furthermore, please note that this project is fully compliant with the GPL v3.0 open-source license.</small>
+            </div>
             <div class="sweet-alert-footer">
                 <button class="sweet-alert-btn" id="sweetAlertConfirmBtn">OK</button>
             </div>
@@ -713,12 +719,11 @@ License: GPL v3.0
             'use strict';
 
             // Version check constants
-            const CURRENT_VERSION = '1.2.0';
+            const CURRENT_VERSION = '1.3.0';
             const VERSION_CHECK_URL = 'https://mc.hm0.top/upload/version.json';
             const COOKIE_IGNORE_FOREVER = 'version_ignore_forever';
             const COOKIE_LAST_REMIND = 'version_last_remind';
 
-            // Cookie utility functions
             function getCookie(name) {
                 const value = `; ${document.cookie}`;
                 const parts = value.split(`; ${name}=`);
@@ -749,18 +754,15 @@ License: GPL v3.0
                 const progressText = document.getElementById('progressText');
                 const downloadBtn = document.getElementById('downloadBtn');
 
-                // About Us elements
                 const aboutBtn = document.getElementById('aboutBtn');
                 const sweetAlertOverlay = document.getElementById('sweetAlertOverlay');
                 const sweetAlertConfirmBtn = document.getElementById('sweetAlertConfirmBtn');
 
-                // Version update popup elements
                 const versionAlertOverlay = document.getElementById('versionAlertOverlay');
                 const versionAlertContent = document.getElementById('versionAlertContent');
                 const versionRemindLater = document.getElementById('versionRemindLater');
                 const versionIgnoreForever = document.getElementById('versionIgnoreForever');
 
-                // State management
                 const state = {
                     currentFile: null,
                     directoryHandle: null,
@@ -768,53 +770,66 @@ License: GPL v3.0
                     isProcessing: false
                 };
 
-                // Check if browser supports File System Access API
-                const isFsApiSupported = 'showDirectoryPicker' in window;
+                // Intelligent detection based on localStorage and UA
+                const pseudoUnsupported = localStorage.getItem('fsApiPseudoUnsupported') === 'true';
+                const hasApi = 'showDirectoryPicker' in window;
 
-                if (isFsApiSupported) {
-                    fsApiBtn.style.display = 'inline-block';
+                // Extract Chrome version
+                const ua = navigator.userAgent;
+                const chromeMatch = ua.match(/\bChrome\/(\d+)(?:\.\d+)*\b/);
+                const chromeVer = chromeMatch ? parseInt(chromeMatch[1], 10) : null;
+
+                // If Chrome version is below 86 and not yet marked, mark as pseudo unsupported
+                if (chromeVer !== null && chromeVer < 86 && !pseudoUnsupported) {
+                    localStorage.setItem('fsApiPseudoUnsupported', 'true');
+                }
+
+                // Show or hide button based on mark
+                if (localStorage.getItem('fsApiPseudoUnsupported') === 'true') {
+                    fsApiBtn.style.display = 'none';
+                    const note = document.createElement('p');
+                    note.className = 'api-note warning';
+                    note.innerHTML = '⚠️ Current browser does not support folder selection. Please use the ZIP file upload feature.';
+                    apiNoteContainer.appendChild(note);
                 } else {
-                    // Show note in browsers that don't support FS API
-                    const unsupportedNote = document.createElement('p');
-                    unsupportedNote.className = 'api-note warning';
-                    unsupportedNote.innerHTML = '⚠️ Current browser does not support folder selection. Please use the ZIP file upload feature.';
-                    apiNoteContainer.appendChild(unsupportedNote);
+                    if (hasApi) {
+                        fsApiBtn.style.display = 'inline-block';
+                    } else {
+                        fsApiBtn.style.display = 'none';
+                        const note = document.createElement('p');
+                        note.className = 'api-note warning';
+                        note.innerHTML = '⚠️ Current browser does not support folder selection. Please use the ZIP file upload feature.';
+                        apiNoteContainer.appendChild(note);
+                    }
                 }
 
                 // About Us functionality
-                aboutBtn.addEventListener('click', showAboutModal);
-                sweetAlertConfirmBtn.addEventListener('click', hideAboutModal);
-
-                // Click outside popup to close it
-                sweetAlertOverlay.addEventListener('click', function(e) {
-                    if (e.target === sweetAlertOverlay) {
-                        hideAboutModal();
-                    }
-                });
-
-                // Press ESC to close popup
-                document.addEventListener('keydown', function(e) {
-                    if (e.key === 'Escape' && sweetAlertOverlay.classList.contains('show')) {
-                        hideAboutModal();
-                    }
-                });
-
-                // Show About Us
-                function showAboutModal() {
+                aboutBtn.addEventListener('click', () => {
                     sweetAlertOverlay.classList.add('show');
                     document.body.style.overflow = 'hidden';
-                }
-
-                // Hide About Us
-                function hideAboutModal() {
+                });
+                sweetAlertConfirmBtn.addEventListener('click', () => {
                     sweetAlertOverlay.classList.remove('show');
                     document.body.style.overflow = '';
-                }
+                });
+                sweetAlertOverlay.addEventListener('click', (e) => {
+                    if (e.target === sweetAlertOverlay) {
+                        sweetAlertOverlay.classList.remove('show');
+                        document.body.style.overflow = '';
+                    }
+                });
+                document.addEventListener('keydown', (e) => {
+                    if (e.key === 'Escape' && sweetAlertOverlay.classList.contains('show')) {
+                        sweetAlertOverlay.classList.remove('show');
+                        document.body.style.overflow = '';
+                    }
+                });
+                setTimeout(() => {
+                    sweetAlertOverlay.classList.add('show');
+                    document.body.style.overflow = 'hidden';
+                }, 800);
 
-                // Show About Us popup automatically after page load
-                setTimeout(showAboutModal, 800);
-
-                // Version check logic
+                // Version check
                 function checkVersion() {
                     fetch(VERSION_CHECK_URL, { cache: 'no-cache' })
                         .then(response => {
@@ -823,98 +838,67 @@ License: GPL v3.0
                         })
                         .then(data => {
                             const latestVersion = data.latest;
-
-                            // Check if this version is permanently ignored
                             const ignoreVersion = getCookie(COOKIE_IGNORE_FOREVER);
-                            if (ignoreVersion && ignoreVersion === latestVersion) {
-                                return; // Permanently ignore this version
-                            }
-
-                            // Check if reminded within 24 hours
+                            if (ignoreVersion && ignoreVersion === latestVersion) return;
                             const lastRemind = getCookie(COOKIE_LAST_REMIND);
                             if (lastRemind) {
                                 const last = parseInt(lastRemind, 10);
                                 const now = Date.now();
-                                if (now - last < 24 * 60 * 60 * 1000) {
-                                    return; // Reminded within last 24h
-                                }
+                                if (now - last < 24 * 60 * 60 * 1000) return;
                             }
-
                             if (latestVersion && latestVersion !== CURRENT_VERSION) {
                                 showVersionAlert(latestVersion, data.message || 'A new version is available. It is recommended to update.', data.changelog);
                             }
                         })
-                        .catch(err => {
-                            console.log('Version check failed:', err);
-                            // Silently fail
-                        });
+                        .catch(err => console.log('Version check failed:', err));
                 }
 
-                // Show version update popup
                 function showVersionAlert(latestVersion, message, changelogUrl) {
                     let contentHtml = `<p>Current version: ${CURRENT_VERSION}<br>Latest version: ${latestVersion}</p>`;
                     contentHtml += `<p>${message}</p>`;
-                    if (changelogUrl) {
-                        contentHtml += `<p><a href="${changelogUrl}" target="_blank" style="color: var(--primary);">View changelog</a></p>`;
-                    }
+                    if (changelogUrl) contentHtml += `<p><a href="${changelogUrl}" target="_blank" style="color: var(--primary);">View changelog</a></p>`;
                     versionAlertContent.innerHTML = contentHtml;
-
                     versionAlertOverlay.classList.add('show');
                     document.body.style.overflow = 'hidden';
 
-                    // Remove old event listeners by cloning and replacing
                     versionRemindLater.replaceWith(versionRemindLater.cloneNode(true));
                     versionIgnoreForever.replaceWith(versionIgnoreForever.cloneNode(true));
-
                     const newRemindLater = document.getElementById('versionRemindLater');
                     const newIgnoreForever = document.getElementById('versionIgnoreForever');
 
-                    newRemindLater.addEventListener('click', function() {
+                    newRemindLater.addEventListener('click', () => {
                         setCookie(COOKIE_LAST_REMIND, Date.now(), 1);
                         versionAlertOverlay.classList.remove('show');
                         document.body.style.overflow = '';
                     });
-
-                    newIgnoreForever.addEventListener('click', function() {
+                    newIgnoreForever.addEventListener('click', () => {
                         setCookie(COOKIE_IGNORE_FOREVER, latestVersion, 3650);
                         versionAlertOverlay.classList.remove('show');
                         document.body.style.overflow = '';
                     });
                 }
 
-                // Click outside popup to close
-                versionAlertOverlay.addEventListener('click', function(e) {
+                versionAlertOverlay.addEventListener('click', (e) => {
                     if (e.target === versionAlertOverlay) {
                         versionAlertOverlay.classList.remove('show');
                         document.body.style.overflow = '';
                     }
                 });
-
-                // Press ESC to close
-                document.addEventListener('keydown', function(e) {
+                document.addEventListener('keydown', (e) => {
                     if (e.key === 'Escape' && versionAlertOverlay.classList.contains('show')) {
                         versionAlertOverlay.classList.remove('show');
                         document.body.style.overflow = '';
                     }
                 });
-
-                // Execute version check
                 setTimeout(checkVersion, 1000);
 
-                // Update progress bar
                 function updateProgress(percent, message) {
                     const percentValue = Math.min(100, Math.max(0, percent));
                     progressBar.style.width = percentValue + '%';
                     progressText.textContent = Math.round(percentValue) + '%';
-
-                    if (message) {
-                        status.innerHTML = message + '\nProgress: ' + Math.round(percentValue) + '%';
-                    }
-
-                    console.log('Progress update:', percentValue + '%', message || '');
+                    if (message) status.innerHTML = message + '\nProgress: ' + Math.round(percentValue) + '%';
                 }
 
-                // Event listeners
                 browseBtn.addEventListener('click', () => {
                     fileInput.value = '';
                     fileInput.click();
@@ -933,15 +917,12 @@ License: GPL v3.0
                     e.preventDefault();
                     uploadArea.classList.add('dragover');
                 });
-
                 uploadArea.addEventListener('dragleave', () => {
                     uploadArea.classList.remove('dragover');
                 });
-
                 uploadArea.addEventListener('drop', (e) => {
                     e.preventDefault();
                     uploadArea.classList.remove('dragover');
-
                     if (e.dataTransfer.files.length > 0) {
                         state.useFileSystemAPI = false;
                         handleFileSelect(e.dataTransfer.files[0]);
@@ -950,20 +931,26 @@ License: GPL v3.0
 
                 processBtn.addEventListener('click', startProcessing);
 
+                // Detect pseudo support on first click
                 async function selectDirectory() {
-                    try {
-                        if (!isFsApiSupported) {
-                            throw new Error('Current browser does not support folder selection API');
-                        }
+                    if (localStorage.getItem('fsApiPseudoUnsupported') === 'true') {
+                        status.innerHTML = '<span class="error">Current browser does not support folder selection</span>';
+                        fileInfo.textContent = 'Failed to select folder';
+                        processBtn.disabled = true;
+                        return;
+                    }
 
+                    let pickerShown = false;
+                    const timeout = 1000; // timeout 1000ms
+                    const timer = setTimeout(() => { pickerShown = true; }, timeout);
+
+                    try {
+                        if (!('showDirectoryPicker' in window)) throw new Error('Current browser does not support folder selection API');
                         state.directoryHandle = await window.showDirectoryPicker();
+                        clearTimeout(timer);
                         state.useFileSystemAPI = true;
 
-                        // Check if directory has CURRENT and MANIFEST files
-                        let hasCurrent = false;
-                        let hasManifest = false;
-                        let fileCount = 0;
-
+                        let hasCurrent = false, hasManifest = false, fileCount = 0;
                         for await (const entry of state.directoryHandle.values()) {
                             if (entry.kind === 'file') {
                                 fileCount++;
@@ -971,32 +958,35 @@ License: GPL v3.0
                                 if (entry.name.startsWith('MANIFEST')) hasManifest = true;
                             }
                         }
-
                         if (!hasCurrent || !hasManifest) {
                             status.innerHTML = '<span class="error">Error: Selected folder is missing CURRENT or MANIFEST files. Please ensure this is a NetEase Edition MC save directory or the directory is "/db" </span>';
                             fileInfo.textContent = 'Invalid folder: Missing required files';
                             processBtn.disabled = true;
                             return;
                         }
-
                         fileInfo.textContent = `Folder selected: ${state.directoryHandle.name} (${fileCount} files)`;
                         processBtn.disabled = false;
                         status.innerHTML = 'Folder selected.<span class="error"> Warning: Decryption will overwrite original files directly. Please ensure you have backups!</span>';
-
                     } catch (error) {
+                        clearTimeout(timer);
                         console.error('Error selecting directory:', error);
-                        let errorMsg = 'Failed to select folder: ';
-
-                        if (error.name === 'AbortError') {
-                            errorMsg += 'User cancelled selection';
-                        } else if (error.name === 'SecurityError') {
-                            errorMsg += 'Security restrictions. Please check browser permissions';
-                        } else if (error.message.includes('not supported')) {
-                            errorMsg += 'Browser does not support this feature';
-                        } else {
-                            errorMsg += error.message;
+                        if (error.name === 'AbortError' && !pickerShown) {
+                            localStorage.setItem('fsApiPseudoUnsupported', 'true');
+                            fsApiBtn.style.display = 'none';
+                            const note = document.createElement('p');
+                            note.className = 'api-note warning';
+                            note.innerHTML = '⚠️ Current browser does not support folder selection. This button has been automatically hidden.';
+                            apiNoteContainer.appendChild(note);
+                            status.innerHTML = '<span class="error">Your browser does not support folder selection. Please use ZIP file decryption.</span>';
+                            fileInfo.textContent = 'Failed to select folder';
+                            processBtn.disabled = true;
+                            return;
                         }
-
+                        let errorMsg = 'Failed to select folder: ';
+                        if (error.name === 'AbortError') errorMsg += 'User cancelled selection';
+                        else if (error.name === 'SecurityError') errorMsg += 'Security restrictions. Please check browser permissions';
+                        else if (error.message.includes('not supported')) errorMsg += 'Browser does not support this feature';
+                        else errorMsg += error.message;
                         status.innerHTML = '<span class="error">' + errorMsg + '</span>';
                         fileInfo.textContent = 'Failed to select folder';
                         processBtn.disabled = true;
@@ -1005,29 +995,20 @@ License: GPL v3.0
 
                 function handleFileSelect(file) {
                     try {
-                        const isZipFile = file.type === 'application/zip' ||
-                                         file.name.toLowerCase().endsWith('.zip');
-
+                        const isZipFile = file.type === 'application/zip' || file.name.toLowerCase().endsWith('.zip');
                         if (!isZipFile) {
                             status.innerHTML = '<span class="error">Error: Please upload a ZIP format save file<br>Supported file format: .zip</span>';
                             fileInfo.textContent = `Wrong file type: ${file.name}`;
-
                             uploadArea.classList.add('error-border');
-                            setTimeout(() => {
-                                uploadArea.classList.remove('error-border');
-                            }, 3000);
-
+                            setTimeout(() => uploadArea.classList.remove('error-border'), 3000);
                             processBtn.disabled = true;
                             return;
                         }
-
                         uploadArea.classList.remove('error-border');
-
                         state.currentFile = file;
                         fileInfo.textContent = `Selected: ${file.name} (${formatFileSize(file.size)})`;
                         processBtn.disabled = false;
                         status.textContent = 'ZIP file ready. Click "Start Decryption" button';
-
                     } catch (error) {
                         console.error('File selection error:', error);
                         status.innerHTML = '<span class="error">Error: ' + error.message + '</span>';
@@ -1044,45 +1025,28 @@ License: GPL v3.0
 
                 async function startProcessing() {
                     if ((!state.currentFile && !state.directoryHandle) || state.isProcessing) return;
-
                     state.isProcessing = true;
                     processBtn.disabled = true;
                     processBtn.textContent = 'Processing...';
-
                     updateProgress(0, 'Initializing...');
-
                     try {
-                        if (state.useFileSystemAPI) {
-                            await processDirectory();
-                        } else {
-                            await processZipFile();
-                        }
-
+                        if (state.useFileSystemAPI) await processDirectory();
+                        else await processZipFile();
                         updateProgress(100, 'Decryption complete!');
                         status.innerHTML = '<span class="success">✓ Decryption complete!</span>';
-
                         if (!state.useFileSystemAPI) {
                             downloadBtn.style.display = 'block';
                             downloadBtn.scrollIntoView({ behavior: 'smooth' });
                         }
-
                     } catch (error) {
                         console.error('Processing error:', error);
                         let errorDetail = 'Error details: ' + error.message;
-
-                        if (error.message.includes('CURRENT not found')) {
-                            errorDetail = 'Error: CURRENT file not found. Please ensure this is a valid NetEase Edition save or the directory is "/db" ';
-                        } else if (error.message.includes('MANIFEST not found')) {
-                            errorDetail = 'Error: MANIFEST file not found. Please ensure this is a valid NetEase Edition save or the directory is "/db" ';
-                        } else if (error.message.includes('not encrypted')) {
-                            errorDetail = 'Error: This save is not encrypted or uses an unsupported encryption format';
-                        } else if (error.message.includes('ZIP file')) {
-                            errorDetail = 'Error: Failed to read ZIP file. The file may be corrupted';
-                        }
-
+                        if (error.message.includes('CURRENT not found')) errorDetail = 'Error: CURRENT file not found. Please ensure this is a valid NetEase Edition save or the directory is "/db" ';
+                        else if (error.message.includes('MANIFEST not found')) errorDetail = 'Error: MANIFEST file not found. Please ensure this is a valid NetEase Edition save or the directory is "/db" ';
+                        else if (error.message.includes('not encrypted')) errorDetail = 'Error: This save is not encrypted or uses an unsupported encryption format';
+                        else if (error.message.includes('ZIP file')) errorDetail = 'Error: Failed to read ZIP file. The file may be corrupted';
                         status.innerHTML = '<span class="error">' + errorDetail + '</span>';
                         updateProgress(0, 'Processing failed');
-
                     } finally {
                         processBtn.disabled = false;
                         processBtn.textContent = 'Start Decryption';
@@ -1092,94 +1056,44 @@ License: GPL v3.0
 
                 async function processZipFile() {
                     if (!state.currentFile) throw new Error('No file selected');
-
                     updateProgress(5, 'Reading ZIP file...');
-
                     let zip;
-                    try {
-                        zip = await JSZip.loadAsync(state.currentFile);
-                    } catch (zipError) {
-                        throw new Error('Failed to read ZIP file: ' + zipError.message);
-                    }
-
+                    try { zip = await JSZip.loadAsync(state.currentFile); } catch (zipError) { throw new Error('Failed to read ZIP file: ' + zipError.message); }
                     updateProgress(15, 'Analyzing save structure...');
-
-                    let currentFileEntry = null;
-                    let manifestFileEntry = null;
-                    let fileList = [];
-
+                    let currentFileEntry = null, manifestFileEntry = null, fileList = [];
                     zip.forEach((relativePath, zipEntry) => {
                         if (zipEntry.dir) return;
                         fileList.push(zipEntry);
-
-                        if (relativePath === 'CURRENT') {
-                            currentFileEntry = zipEntry;
-                        } else if (relativePath.startsWith('MANIFEST')) {
-                            manifestFileEntry = zipEntry;
-                        }
+                        if (relativePath === 'CURRENT') currentFileEntry = zipEntry;
+                        else if (relativePath.startsWith('MANIFEST')) manifestFileEntry = zipEntry;
                     });
-
-                    if (!currentFileEntry) {
-                        throw new Error('CURRENT file not found. This may not be a valid NetEase Edition save');
-                    }
-
-                    if (!manifestFileEntry) {
-                        throw new Error('MANIFEST file not found. This may not be a valid NetEase Edition save');
-                    }
-
+                    if (!currentFileEntry) throw new Error('CURRENT file not found. This may not be a valid NetEase Edition save');
+                    if (!manifestFileEntry) throw new Error('MANIFEST file not found. This may not be a valid NetEase Edition save');
                     updateProgress(25, 'Getting decryption key...');
-
                     let currentFileData;
-                    try {
-                        currentFileData = await currentFileEntry.async('uint8array');
-                    } catch (readError) {
-                        throw new Error('Failed to read CURRENT file: ' + readError.message);
-                    }
-
+                    try { currentFileData = await currentFileEntry.async('uint8array'); } catch (readError) { throw new Error('Failed to read CURRENT file: ' + readError.message); }
                     const encryptionHeader = new Uint8Array([0x80, 0x1D, 0x30, 0x01]);
-                    const isEncrypted = checkHeader(currentFileData, encryptionHeader);
-
-                    if (!isEncrypted) {
-                        throw new Error('Save is not encrypted or uses old encryption, cannot decrypt');
-                    }
-
+                    if (!checkHeader(currentFileData, encryptionHeader)) throw new Error('Save is not encrypted or uses old encryption, cannot decrypt');
                     const manifestName = manifestFileEntry.name;
                     const key = await getKey(currentFileData, manifestName);
-
                     updateProgress(35, 'Starting file decryption...');
-
                     const newZip = new JSZip();
                     let processedFiles = 0;
                     const totalFiles = fileList.length;
-
                     for (const zipEntry of fileList) {
                         try {
                             const fileData = await zipEntry.async('uint8array');
-
                             if (checkHeader(fileData, encryptionHeader)) {
-                                const decryptedData = decryptFile(fileData, key);
-                                newZip.file(zipEntry.name, decryptedData);
+                                newZip.file(zipEntry.name, decryptFile(fileData, key));
                             } else {
                                 newZip.file(zipEntry.name, fileData);
                             }
-
                             processedFiles++;
-                            const progress = 35 + (processedFiles / totalFiles) * 55;
-                            updateProgress(progress, `Processing file: ${processedFiles}/${totalFiles}`);
-
-                        } catch (fileError) {
-                            console.warn(`Error processing file ${zipEntry.name}:`, fileError);
-                        }
+                            updateProgress(35 + (processedFiles / totalFiles) * 55, `Processing file: ${processedFiles}/${totalFiles}`);
+                        } catch (fileError) { console.warn(`Error processing file ${zipEntry.name}:`, fileError); }
                     }
-
                     updateProgress(95, 'Generating decrypted ZIP file...');
-
-                    const content = await newZip.generateAsync({
-                        type: 'blob',
-                        compression: 'DEFLATE',
-                        compressionOptions: { level: 6 }
-                    });
-
+                    const content = await newZip.generateAsync({ type: 'blob', compression: 'DEFLATE', compressionOptions: { level: 6 } });
                     const url = URL.createObjectURL(content);
                     downloadBtn.href = url;
                     downloadBtn.download = state.currentFile.name.replace('.zip', '_decrypted.zip') || 'mc_decrypted.zip';
@@ -1187,12 +1101,8 @@ License: GPL v3.0
 
                 async function processDirectory() {
                     if (!state.directoryHandle) throw new Error('No folder selected');
-
                     updateProgress(5, 'Scanning folder...');
-
-                    let currentFileHandle, manifestFileHandle;
-                    let fileHandles = [];
-
+                    let currentFileHandle, manifestFileHandle, fileHandles = [];
                     for await (const entry of state.directoryHandle.values()) {
                         if (entry.kind === 'file') {
                             fileHandles.push(entry);
@@ -1200,90 +1110,56 @@ License: GPL v3.0
                             if (entry.name.startsWith('MANIFEST')) manifestFileHandle = entry;
                         }
                     }
-
-                    if (!currentFileHandle) {
-                        throw new Error('CURRENT file not found');
-                    }
-
-                    if (!manifestFileHandle) {
-                        throw new Error('MANIFEST file not found');
-                    }
-
+                    if (!currentFileHandle) throw new Error('CURRENT file not found');
+                    if (!manifestFileHandle) throw new Error('MANIFEST file not found');
                     updateProgress(15, 'Reading encryption information...');
-
                     const currentFile = await currentFileHandle.getFile();
                     const currentFileData = new Uint8Array(await currentFile.arrayBuffer());
-
                     const encryptionHeader = new Uint8Array([0x80, 0x1D, 0x30, 0x01]);
-                    const isEncrypted = checkHeader(currentFileData, encryptionHeader);
-
-                    if (!isEncrypted) {
-                        throw new Error('Save is not encrypted or uses old encryption, cannot decrypt');
-                    }
-
+                    if (!checkHeader(currentFileData, encryptionHeader)) throw new Error('Save is not encrypted or uses old encryption, cannot decrypt');
                     updateProgress(25, 'Getting decryption key...');
-
                     const manifestName = manifestFileHandle.name;
                     const key = await getKey(currentFileData, manifestName);
-
                     updateProgress(35, 'Starting file decryption...');
-
                     let processedFiles = 0;
                     const totalFiles = fileHandles.length;
-
                     for (const fileHandle of fileHandles) {
                         try {
                             const file = await fileHandle.getFile();
                             const fileData = new Uint8Array(await file.arrayBuffer());
-
                             if (checkHeader(fileData, encryptionHeader)) {
                                 const decryptedData = decryptFile(fileData, key);
-
                                 const writable = await fileHandle.createWritable();
                                 await writable.write(decryptedData);
                                 await writable.close();
                             }
-
                             processedFiles++;
-                            const progress = 35 + (processedFiles / totalFiles) * 55;
-                            updateProgress(progress, `Processing file: ${processedFiles}/${totalFiles}`);
-
-                        } catch (fileError) {
-                            console.warn(`Error processing file ${fileHandle.name}:`, fileError);
-                        }
+                            updateProgress(35 + (processedFiles / totalFiles) * 55, `Processing file: ${processedFiles}/${totalFiles}`);
+                        } catch (fileError) { console.warn(`Error processing file ${fileHandle.name}:`, fileError); }
                     }
-
                     updateProgress(100, 'Folder decryption complete!');
                 }
 
                 function checkHeader(fileData, header) {
                     if (fileData.length < header.length) return false;
-
-                    for (let i = 0; i < header.length; i++) {
-                        if (fileData[i] !== header[i]) return false;
-                    }
-
+                    for (let i = 0; i < header.length; i++) if (fileData[i] !== header[i]) return false;
                     return true;
                 }
 
                 async function getKey(currentFileData, manifestName) {
                     const encryptedData = currentFileData.slice(4);
-
                     const encoder = new TextEncoder();
                     const manifestBytes = encoder.encode(manifestName);
                     const source = new Uint8Array(manifestBytes.length + 1);
                     source.set(manifestBytes);
                     source[manifestBytes.length] = 0x0A;
-
                     const key = xor(encryptedData, source);
                     return optimizeKey(key);
                 }
 
                 function xor(data, key) {
                     const result = new Uint8Array(data.length);
-                    for (let i = 0; i < data.length; i++) {
-                        result[i] = data[i] ^ key[i % key.length];
-                    }
+                    for (let i = 0; i < data.length; i++) result[i] = data[i] ^ key[i % key.length];
                     return result;
                 }
 
@@ -1291,26 +1167,15 @@ License: GPL v3.0
                     if (key.length === 16) {
                         const firstHalf = key.slice(0, 8);
                         const secondHalf = key.slice(8, 16);
-
                         let isSame = true;
-                        for (let i = 0; i < 8; i++) {
-                            if (firstHalf[i] !== secondHalf[i]) {
-                                isSame = false;
-                                break;
-                            }
-                        }
-
-                        if (isSame) {
-                            return firstHalf;
-                        }
+                        for (let i = 0; i < 8; i++) if (firstHalf[i] !== secondHalf[i]) { isSame = false; break; }
+                        if (isSame) return firstHalf;
                     }
-
                     return key;
                 }
 
                 function decryptFile(fileData, key) {
-                    const encryptedData = fileData.slice(4);
-                    return xor(encryptedData, key);
+                    return xor(fileData.slice(4), key);
                 }
             });
         })();
