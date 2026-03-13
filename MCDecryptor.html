@@ -646,7 +646,7 @@ License: GPL v3.0
         <h1>Minecraft 网易版存档解密工具</h1>
 
         <div class="warning">
-            <strong>重要提醒：</strong>
+            <strong>重要提醒：</strong><br>
             1. 使用"选择文件夹"功能解密时，会直接覆盖原文件！请务必备份您的存档，特别是"存档/db"目录！<br>
             2. 解密过程完全在浏览器本地进行，文件不会上传到服务器<br>
             3. 选择ZIP文件解密，请将"存档/db"目录下的全部文件压缩后上传，不要压缩整个存档。压缩级别建议选"仅存储"
@@ -683,14 +683,11 @@ License: GPL v3.0
         <a href="https://www.gnu.org/licenses/gpl-3.0" target="_blank" rel="license noopener noreferrer">
         <img src="https://img.shields.io/badge/License-GPLv3-blue.svg" alt="License: GPL v3"></a>
         <br>
-        <a href="https://github.com/ihaiming/NetEaseMC-Decryptor" target="_blank">Github</a>
-        <br>
         <a href="https://hm0.top/start-page.html" target="_blank">联系我们</a>
         <br>
         <a href="https://hm0.top/go/mc.html" target="_blank">部署同款项目</a>
         <br>
         <a href="https://en.mc.hm0.top/" target="_blank">English Version</a>
-        <br>
     </footer>
 
     <!-- 关于我们按钮 -->
@@ -707,7 +704,7 @@ License: GPL v3.0
                 <br>
                 如有问题，点击下方联系我们
                 <br>
-                <span style="color: #E65100;">To ensure our content is accessible to non-Chinese speakers, we have introduced an English version of this page. Please be advised that this English page has been machine-translated by DeepSeek. We assume no liability for any errors or ambiguities that may exist in the translation. Furthermore, please note that this project is fully compliant with the GPL v3.0 open-source license.
+                <span style="color: #E65100;">To make our content more accessible to non-Chinese speakers, we’ve added an English version of this page. Please note that this English page has been machine-translated using DeepSeek. Additionally, this project is fully compliant with the GPL v3.0 open-source license.
                 </span>
             </div>
             <div class="sweet-alert-footer">
@@ -737,12 +734,11 @@ License: GPL v3.0
             'use strict';
 
             // 版本检测常量
-            const CURRENT_VERSION = '1.2.0';
+            const CURRENT_VERSION = '1.3.0';
             const VERSION_CHECK_URL = 'https://mc.hm0.top/upload/version.json';
             const COOKIE_IGNORE_FOREVER = 'version_ignore_forever';
             const COOKIE_LAST_REMIND = 'version_last_remind';
 
-            // Cookie 工具函数
             function getCookie(name) {
                 const value = `; ${document.cookie}`;
                 const parts = value.split(`; ${name}=`);
@@ -773,18 +769,15 @@ License: GPL v3.0
                 const progressText = document.getElementById('progressText');
                 const downloadBtn = document.getElementById('downloadBtn');
 
-                // 关于我们元素
                 const aboutBtn = document.getElementById('aboutBtn');
                 const sweetAlertOverlay = document.getElementById('sweetAlertOverlay');
                 const sweetAlertConfirmBtn = document.getElementById('sweetAlertConfirmBtn');
 
-                // 版本更新弹窗元素
                 const versionAlertOverlay = document.getElementById('versionAlertOverlay');
                 const versionAlertContent = document.getElementById('versionAlertContent');
                 const versionRemindLater = document.getElementById('versionRemindLater');
                 const versionIgnoreForever = document.getElementById('versionIgnoreForever');
 
-                // 状态管理
                 const state = {
                     currentFile: null,
                     directoryHandle: null,
@@ -792,55 +785,67 @@ License: GPL v3.0
                     isProcessing: false
                 };
 
-                // 检查浏览器是否支持File System Access API
-                const isFsApiSupported = 'showDirectoryPicker' in window;
+                // 根据 localStorage 和 UA 预判断
+                const pseudoUnsupported = localStorage.getItem('fsApiPseudoUnsupported') === 'true';
+                const hasApi = 'showDirectoryPicker' in window;
 
-                if (isFsApiSupported) {
-                    fsApiBtn.style.display = 'inline-block';
+                // 提取 Chrome 版本号
+                const ua = navigator.userAgent;
+                const chromeMatch = ua.match(/\bChrome\/(\d+)(?:\.\d+)*\b/);
+                const chromeVer = chromeMatch ? parseInt(chromeMatch[1], 10) : null;
+
+                // 如果内核版本低于 86 且尚未标记，则直接标记为伪支持
+                if (chromeVer !== null && chromeVer < 86 && !pseudoUnsupported) {
+                    localStorage.setItem('fsApiPseudoUnsupported', 'true');
+                }
+
+                // 根据标记显示或隐藏按钮
+                if (localStorage.getItem('fsApiPseudoUnsupported') === 'true') {
+                    fsApiBtn.style.display = 'none';
+                    const note = document.createElement('p');
+                    note.className = 'api-note warning';
+                    note.innerHTML = '⚠️ 当前浏览器不支持文件夹选择功能，请使用ZIP文件上传功能';
+                    apiNoteContainer.appendChild(note);
                 } else {
-                    // 在不支持FS API的浏览器中显示提示
-                    const unsupportedNote = document.createElement('p');
-                    unsupportedNote.className = 'api-note warning';
-                    unsupportedNote.innerHTML = '⚠️ 当前浏览器不支持文件夹选择功能，请使用ZIP文件上传功能';
-                    apiNoteContainer.appendChild(unsupportedNote);
+                    if (hasApi) {
+                        fsApiBtn.style.display = 'inline-block';
+                    } else {
+                        fsApiBtn.style.display = 'none';
+                        const note = document.createElement('p');
+                        note.className = 'api-note warning';
+                        note.innerHTML = '⚠️ 当前浏览器不支持文件夹选择功能，请使用ZIP文件上传功能';
+                        apiNoteContainer.appendChild(note);
+                    }
                 }
 
                 // 关于我们功能
-                aboutBtn.addEventListener('click', showAboutModal);
-                sweetAlertConfirmBtn.addEventListener('click', hideAboutModal);
-
-                // 点击弹窗外部也可以关闭弹窗
-                sweetAlertOverlay.addEventListener('click', function(e) {
-                    if (e.target === sweetAlertOverlay) {
-                        hideAboutModal();
-                    }
-                });
-
-                // 按ESC键关闭弹窗
-                document.addEventListener('keydown', function(e) {
-                    if (e.key === 'Escape' && sweetAlertOverlay.classList.contains('show')) {
-                        hideAboutModal();
-                    }
-                });
-
-                // 显示关于我们
-                function showAboutModal() {
+                aboutBtn.addEventListener('click', () => {
                     sweetAlertOverlay.classList.add('show');
                     document.body.style.overflow = 'hidden';
-                }
-
-                // 隐藏关于我们
-                function hideAboutModal() {
+                });
+                sweetAlertConfirmBtn.addEventListener('click', () => {
                     sweetAlertOverlay.classList.remove('show');
                     document.body.style.overflow = '';
-                }
+                });
+                sweetAlertOverlay.addEventListener('click', (e) => {
+                    if (e.target === sweetAlertOverlay) {
+                        sweetAlertOverlay.classList.remove('show');
+                        document.body.style.overflow = '';
+                    }
+                });
+                document.addEventListener('keydown', (e) => {
+                    if (e.key === 'Escape' && sweetAlertOverlay.classList.contains('show')) {
+                        sweetAlertOverlay.classList.remove('show');
+                        document.body.style.overflow = '';
+                    }
+                });
+                setTimeout(() => {
+                    sweetAlertOverlay.classList.add('show');
+                    document.body.style.overflow = 'hidden';
+                }, 800);
 
-                // 页面加载后自动显示关于弹窗
-                setTimeout(showAboutModal, 800);
-
-                // 版本检测逻辑
+                // 版本检测
                 function checkVersion() {
-                    // 发起版本检测
                     fetch(VERSION_CHECK_URL, { cache: 'no-cache' })
                         .then(response => {
                             if (!response.ok) throw new Error('网络错误');
@@ -848,102 +853,67 @@ License: GPL v3.0
                         })
                         .then(data => {
                             const latestVersion = data.latest;
-
-                            // 检查永久忽略cookie：如果存在且值等于最新版本，则忽略提醒
                             const ignoreVersion = getCookie(COOKIE_IGNORE_FOREVER);
-                            if (ignoreVersion && ignoreVersion === latestVersion) {
-                                return; // 永久忽略此版本
-                            }
-
-                            // 检查24小时内是否提醒过
+                            if (ignoreVersion && ignoreVersion === latestVersion) return;
                             const lastRemind = getCookie(COOKIE_LAST_REMIND);
                             if (lastRemind) {
                                 const last = parseInt(lastRemind, 10);
                                 const now = Date.now();
-                                if (now - last < 24 * 60 * 60 * 1000) {
-                                    return; // 24小时内已提醒
-                                }
+                                if (now - last < 24 * 60 * 60 * 1000) return;
                             }
-
                             if (latestVersion && latestVersion !== CURRENT_VERSION) {
                                 showVersionAlert(latestVersion, data.message || '发现新版本，建议更新以获取更好体验。', data.changelog);
                             }
                         })
-                        .catch(err => {
-                            console.log('版本检测失败:', err);
-                            // 静默失败
-                        });
+                        .catch(err => console.log('版本检测失败:', err));
                 }
 
-                // 显示版本更新弹窗
                 function showVersionAlert(latestVersion, message, changelogUrl) {
-                    // 设置弹窗内容
                     let contentHtml = `<p>当前版本：${CURRENT_VERSION}<br>最新版本：${latestVersion}</p>`;
                     contentHtml += `<p>${message}</p>`;
-                    if (changelogUrl) {
-                        contentHtml += `<p><a href="${changelogUrl}" target="_blank" style="color: var(--primary);">查看更新日志</a></p>`;
-                    }
+                    if (changelogUrl) contentHtml += `<p><a href="${changelogUrl}" target="_blank" style="color: var(--primary);">查看更新日志</a></p>`;
                     versionAlertContent.innerHTML = contentHtml;
-
-                    // 显示弹窗
                     versionAlertOverlay.classList.add('show');
                     document.body.style.overflow = 'hidden';
 
-                    // 移除之前绑定的按钮事件（先克隆替换以清除旧监听器）
                     versionRemindLater.replaceWith(versionRemindLater.cloneNode(true));
                     versionIgnoreForever.replaceWith(versionIgnoreForever.cloneNode(true));
-                    // 重新获取按钮引用
                     const newRemindLater = document.getElementById('versionRemindLater');
                     const newIgnoreForever = document.getElementById('versionIgnoreForever');
 
-                    // 绑定新事件，使用闭包捕获 latestVersion
-                    newRemindLater.addEventListener('click', function() {
+                    newRemindLater.addEventListener('click', () => {
                         setCookie(COOKIE_LAST_REMIND, Date.now(), 1);
                         versionAlertOverlay.classList.remove('show');
                         document.body.style.overflow = '';
                     });
-
-                    newIgnoreForever.addEventListener('click', function() {
-                        // 存储当前最新版本号到永久忽略cookie
+                    newIgnoreForever.addEventListener('click', () => {
                         setCookie(COOKIE_IGNORE_FOREVER, latestVersion, 3650);
                         versionAlertOverlay.classList.remove('show');
                         document.body.style.overflow = '';
                     });
                 }
 
-                // 点击弹窗外部关闭
-                versionAlertOverlay.addEventListener('click', function(e) {
+                versionAlertOverlay.addEventListener('click', (e) => {
                     if (e.target === versionAlertOverlay) {
                         versionAlertOverlay.classList.remove('show');
                         document.body.style.overflow = '';
                     }
                 });
-
-                // 按ESC键关闭
-                document.addEventListener('keydown', function(e) {
+                document.addEventListener('keydown', (e) => {
                     if (e.key === 'Escape' && versionAlertOverlay.classList.contains('show')) {
                         versionAlertOverlay.classList.remove('show');
                         document.body.style.overflow = '';
                     }
                 });
-
-                // 执行版本检测
                 setTimeout(checkVersion, 1000);
 
-                // 更新进度条
                 function updateProgress(percent, message) {
                     const percentValue = Math.min(100, Math.max(0, percent));
                     progressBar.style.width = percentValue + '%';
                     progressText.textContent = Math.round(percentValue) + '%';
-
-                    if (message) {
-                        status.innerHTML = message + '\n进度: ' + Math.round(percentValue) + '%';
-                    }
-
-                    console.log('进度更新:', percentValue + '%', message || '');
+                    if (message) status.innerHTML = message + '\n进度: ' + Math.round(percentValue) + '%';
                 }
 
-                // 事件监听
                 browseBtn.addEventListener('click', () => {
                     fileInput.value = '';
                     fileInput.click();
@@ -962,15 +932,12 @@ License: GPL v3.0
                     e.preventDefault();
                     uploadArea.classList.add('dragover');
                 });
-
                 uploadArea.addEventListener('dragleave', () => {
                     uploadArea.classList.remove('dragover');
                 });
-
                 uploadArea.addEventListener('drop', (e) => {
                     e.preventDefault();
                     uploadArea.classList.remove('dragover');
-
                     if (e.dataTransfer.files.length > 0) {
                         state.useFileSystemAPI = false;
                         handleFileSelect(e.dataTransfer.files[0]);
@@ -979,20 +946,26 @@ License: GPL v3.0
 
                 processBtn.addEventListener('click', startProcessing);
 
+                // 当首次点击判断是否伪支持
                 async function selectDirectory() {
-                    try {
-                        if (!isFsApiSupported) {
-                            throw new Error('当前浏览器不支持文件夹选择API');
-                        }
+                    if (localStorage.getItem('fsApiPseudoUnsupported') === 'true') {
+                        status.innerHTML = '<span class="error">当前浏览器不支持文件夹选择功能</span>';
+                        fileInfo.textContent = '选择文件夹失败';
+                        processBtn.disabled = true;
+                        return;
+                    }
 
+                    let pickerShown = false;
+                    const timeout = 1000; //超时1000ms
+                    const timer = setTimeout(() => { pickerShown = true; }, timeout);
+
+                    try {
+                        if (!('showDirectoryPicker' in window)) throw new Error('当前浏览器不支持文件夹选择API');
                         state.directoryHandle = await window.showDirectoryPicker();
+                        clearTimeout(timer);
                         state.useFileSystemAPI = true;
 
-                        // 检查目录中是否有CURRENT和MANIFEST文件
-                        let hasCurrent = false;
-                        let hasManifest = false;
-                        let fileCount = 0;
-
+                        let hasCurrent = false, hasManifest = false, fileCount = 0;
                         for await (const entry of state.directoryHandle.values()) {
                             if (entry.kind === 'file') {
                                 fileCount++;
@@ -1000,32 +973,35 @@ License: GPL v3.0
                                 if (entry.name.startsWith('MANIFEST')) hasManifest = true;
                             }
                         }
-
                         if (!hasCurrent || !hasManifest) {
                             status.innerHTML = '<span class="error">错误：选择的文件夹中缺少CURRENT或MANIFEST文件，请确保这是网易版MC存档目录或目录是"存档/db" </span>';
                             fileInfo.textContent = '文件夹无效：缺少必要文件';
                             processBtn.disabled = true;
                             return;
                         }
-
                         fileInfo.textContent = `已选择文件夹: ${state.directoryHandle.name} (${fileCount}个文件)`;
                         processBtn.disabled = false;
                         status.innerHTML = '已选择文件夹。<span class="error">警告：解密会直接覆盖原文件，请确保已备份！</span>';
-
                     } catch (error) {
+                        clearTimeout(timer);
                         console.error('选择文件夹错误:', error);
-                        let errorMsg = '选择文件夹失败: ';
-
-                        if (error.name === 'AbortError') {
-                            errorMsg += '用户取消选择';
-                        } else if (error.name === 'SecurityError') {
-                            errorMsg += '安全限制，请检查浏览器权限';
-                        } else if (error.message.includes('not supported')) {
-                            errorMsg += '浏览器不支持此功能';
-                        } else {
-                            errorMsg += error.message;
+                        if (error.name === 'AbortError' && !pickerShown) {
+                            localStorage.setItem('fsApiPseudoUnsupported', 'true');
+                            fsApiBtn.style.display = 'none';
+                            const note = document.createElement('p');
+                            note.className = 'api-note warning';
+                            note.innerHTML = '⚠️ 当前浏览器不支持文件夹选择功能，已自动隐藏该按钮';
+                            apiNoteContainer.appendChild(note);
+                            status.innerHTML = '<span class="error">您的浏览器不支持文件夹选择功能，请使用ZIP文件解密</span>';
+                            fileInfo.textContent = '选择文件夹失败';
+                            processBtn.disabled = true;
+                            return;
                         }
-
+                        let errorMsg = '选择文件夹失败: ';
+                        if (error.name === 'AbortError') errorMsg += '用户取消选择';
+                        else if (error.name === 'SecurityError') errorMsg += '安全限制，请检查浏览器权限';
+                        else if (error.message.includes('not supported')) errorMsg += '浏览器不支持此功能';
+                        else errorMsg += error.message;
                         status.innerHTML = '<span class="error">' + errorMsg + '</span>';
                         fileInfo.textContent = '选择文件夹失败';
                         processBtn.disabled = true;
@@ -1034,29 +1010,20 @@ License: GPL v3.0
 
                 function handleFileSelect(file) {
                     try {
-                        const isZipFile = file.type === 'application/zip' ||
-                                         file.name.toLowerCase().endsWith('.zip');
-
+                        const isZipFile = file.type === 'application/zip' || file.name.toLowerCase().endsWith('.zip');
                         if (!isZipFile) {
                             status.innerHTML = '<span class="error">错误：请上传ZIP格式的存档文件<br>支持的文件格式: .zip</span>';
                             fileInfo.textContent = `文件类型错误: ${file.name}`;
-
                             uploadArea.classList.add('error-border');
-                            setTimeout(() => {
-                                uploadArea.classList.remove('error-border');
-                            }, 3000);
-
+                            setTimeout(() => uploadArea.classList.remove('error-border'), 3000);
                             processBtn.disabled = true;
                             return;
                         }
-
                         uploadArea.classList.remove('error-border');
-
                         state.currentFile = file;
                         fileInfo.textContent = `已选择: ${file.name} (${formatFileSize(file.size)})`;
                         processBtn.disabled = false;
                         status.textContent = 'ZIP文件已准备就绪，点击"开始解密"按钮';
-
                     } catch (error) {
                         console.error('文件选择错误:', error);
                         status.innerHTML = '<span class="error">错误: ' + error.message + '</span>';
@@ -1073,45 +1040,28 @@ License: GPL v3.0
 
                 async function startProcessing() {
                     if ((!state.currentFile && !state.directoryHandle) || state.isProcessing) return;
-
                     state.isProcessing = true;
                     processBtn.disabled = true;
                     processBtn.textContent = '正在处理...';
-
                     updateProgress(0, '正在初始化...');
-
                     try {
-                        if (state.useFileSystemAPI) {
-                            await processDirectory();
-                        } else {
-                            await processZipFile();
-                        }
-
+                        if (state.useFileSystemAPI) await processDirectory();
+                        else await processZipFile();
                         updateProgress(100, '解密完成！');
                         status.innerHTML = '<span class="success">✓ 解密完成！</span>';
-
                         if (!state.useFileSystemAPI) {
                             downloadBtn.style.display = 'block';
                             downloadBtn.scrollIntoView({ behavior: 'smooth' });
                         }
-
                     } catch (error) {
                         console.error('处理过程错误:', error);
                         let errorDetail = '错误详情: ' + error.message;
-
-                        if (error.message.includes('找不到CURRENT')) {
-                            errorDetail = '错误：未找到CURRENT文件，请确保是有效的网易版存档或目录是"存档/db" ';
-                        } else if (error.message.includes('找不到MANIFEST')) {
-                            errorDetail = '错误：未找到MANIFEST文件，请确保是有效的网易版存档或目录是"存档/db" ';
-                        } else if (error.message.includes('未加密')) {
-                            errorDetail = '错误：该存档未加密或使用不支持的加密格式';
-                        } else if (error.message.includes('ZIP文件')) {
-                            errorDetail = '错误：读取ZIP文件失败，文件可能已损坏';
-                        }
-
+                        if (error.message.includes('找不到CURRENT')) errorDetail = '错误：未找到CURRENT文件，请确保是有效的网易版存档或目录是"存档/db" ';
+                        else if (error.message.includes('找不到MANIFEST')) errorDetail = '错误：未找到MANIFEST文件，请确保是有效的网易版存档或目录是"存档/db" ';
+                        else if (error.message.includes('未加密')) errorDetail = '错误：该存档未加密或使用不支持的加密格式';
+                        else if (error.message.includes('ZIP文件')) errorDetail = '错误：读取ZIP文件失败，文件可能已损坏';
                         status.innerHTML = '<span class="error">' + errorDetail + '</span>';
                         updateProgress(0, '处理失败');
-
                     } finally {
                         processBtn.disabled = false;
                         processBtn.textContent = '开始解密';
@@ -1121,94 +1071,44 @@ License: GPL v3.0
 
                 async function processZipFile() {
                     if (!state.currentFile) throw new Error('没有选择文件');
-
                     updateProgress(5, '正在读取ZIP文件...');
-
                     let zip;
-                    try {
-                        zip = await JSZip.loadAsync(state.currentFile);
-                    } catch (zipError) {
-                        throw new Error('读取ZIP文件失败: ' + zipError.message);
-                    }
-
+                    try { zip = await JSZip.loadAsync(state.currentFile); } catch (zipError) { throw new Error('读取ZIP文件失败: ' + zipError.message); }
                     updateProgress(15, '分析存档结构...');
-
-                    let currentFileEntry = null;
-                    let manifestFileEntry = null;
-                    let fileList = [];
-
+                    let currentFileEntry = null, manifestFileEntry = null, fileList = [];
                     zip.forEach((relativePath, zipEntry) => {
                         if (zipEntry.dir) return;
                         fileList.push(zipEntry);
-
-                        if (relativePath === 'CURRENT') {
-                            currentFileEntry = zipEntry;
-                        } else if (relativePath.startsWith('MANIFEST')) {
-                            manifestFileEntry = zipEntry;
-                        }
+                        if (relativePath === 'CURRENT') currentFileEntry = zipEntry;
+                        else if (relativePath.startsWith('MANIFEST')) manifestFileEntry = zipEntry;
                     });
-
-                    if (!currentFileEntry) {
-                        throw new Error('找不到CURRENT文件，可能不是有效的网易版存档');
-                    }
-
-                    if (!manifestFileEntry) {
-                        throw new Error('找不到MANIFEST文件，可能不是有效的网易版存档');
-                    }
-
+                    if (!currentFileEntry) throw new Error('找不到CURRENT文件，可能不是有效的网易版存档');
+                    if (!manifestFileEntry) throw new Error('找不到MANIFEST文件，可能不是有效的网易版存档');
                     updateProgress(25, '正在获取解密密钥...');
-
                     let currentFileData;
-                    try {
-                        currentFileData = await currentFileEntry.async('uint8array');
-                    } catch (readError) {
-                        throw new Error('读取CURRENT文件失败: ' + readError.message);
-                    }
-
+                    try { currentFileData = await currentFileEntry.async('uint8array'); } catch (readError) { throw new Error('读取CURRENT文件失败: ' + readError.message); }
                     const encryptionHeader = new Uint8Array([0x80, 0x1D, 0x30, 0x01]);
-                    const isEncrypted = checkHeader(currentFileData, encryptionHeader);
-
-                    if (!isEncrypted) {
-                        throw new Error('存档未加密或使用旧版加密，无法解密');
-                    }
-
+                    if (!checkHeader(currentFileData, encryptionHeader)) throw new Error('存档未加密或使用旧版加密，无法解密');
                     const manifestName = manifestFileEntry.name;
                     const key = await getKey(currentFileData, manifestName);
-
                     updateProgress(35, '开始解密文件...');
-
                     const newZip = new JSZip();
                     let processedFiles = 0;
                     const totalFiles = fileList.length;
-
                     for (const zipEntry of fileList) {
                         try {
                             const fileData = await zipEntry.async('uint8array');
-
                             if (checkHeader(fileData, encryptionHeader)) {
-                                const decryptedData = decryptFile(fileData, key);
-                                newZip.file(zipEntry.name, decryptedData);
+                                newZip.file(zipEntry.name, decryptFile(fileData, key));
                             } else {
                                 newZip.file(zipEntry.name, fileData);
                             }
-
                             processedFiles++;
-                            const progress = 35 + (processedFiles / totalFiles) * 55;
-                            updateProgress(progress, `正在处理文件: ${processedFiles}/${totalFiles}`);
-
-                        } catch (fileError) {
-                            console.warn(`处理文件 ${zipEntry.name} 时出错:`, fileError);
-                        }
+                            updateProgress(35 + (processedFiles / totalFiles) * 55, `正在处理文件: ${processedFiles}/${totalFiles}`);
+                        } catch (fileError) { console.warn(`处理文件 ${zipEntry.name} 时出错:`, fileError); }
                     }
-
                     updateProgress(95, '正在生成解密后的ZIP文件...');
-
-                    const content = await newZip.generateAsync({
-                        type: 'blob',
-                        compression: 'DEFLATE',
-                        compressionOptions: { level: 6 }
-                    });
-
+                    const content = await newZip.generateAsync({ type: 'blob', compression: 'DEFLATE', compressionOptions: { level: 6 } });
                     const url = URL.createObjectURL(content);
                     downloadBtn.href = url;
                     downloadBtn.download = state.currentFile.name.replace('.zip', '_decrypted.zip') || 'mc_decrypted.zip';
@@ -1216,12 +1116,8 @@ License: GPL v3.0
 
                 async function processDirectory() {
                     if (!state.directoryHandle) throw new Error('没有选择文件夹');
-
                     updateProgress(5, '正在扫描文件夹...');
-
-                    let currentFileHandle, manifestFileHandle;
-                    let fileHandles = [];
-
+                    let currentFileHandle, manifestFileHandle, fileHandles = [];
                     for await (const entry of state.directoryHandle.values()) {
                         if (entry.kind === 'file') {
                             fileHandles.push(entry);
@@ -1229,90 +1125,56 @@ License: GPL v3.0
                             if (entry.name.startsWith('MANIFEST')) manifestFileHandle = entry;
                         }
                     }
-
-                    if (!currentFileHandle) {
-                        throw new Error('找不到CURRENT文件');
-                    }
-
-                    if (!manifestFileHandle) {
-                        throw new Error('找不到MANIFEST文件');
-                    }
-
+                    if (!currentFileHandle) throw new Error('找不到CURRENT文件');
+                    if (!manifestFileHandle) throw new Error('找不到MANIFEST文件');
                     updateProgress(15, '正在读取加密信息...');
-
                     const currentFile = await currentFileHandle.getFile();
                     const currentFileData = new Uint8Array(await currentFile.arrayBuffer());
-
                     const encryptionHeader = new Uint8Array([0x80, 0x1D, 0x30, 0x01]);
-                    const isEncrypted = checkHeader(currentFileData, encryptionHeader);
-
-                    if (!isEncrypted) {
-                        throw new Error('存档未加密或使用旧版加密，无法解密');
-                    }
-
+                    if (!checkHeader(currentFileData, encryptionHeader)) throw new Error('存档未加密或使用旧版加密，无法解密');
                     updateProgress(25, '正在获取解密密钥...');
-
                     const manifestName = manifestFileHandle.name;
                     const key = await getKey(currentFileData, manifestName);
-
                     updateProgress(35, '开始解密文件...');
-
                     let processedFiles = 0;
                     const totalFiles = fileHandles.length;
-
                     for (const fileHandle of fileHandles) {
                         try {
                             const file = await fileHandle.getFile();
                             const fileData = new Uint8Array(await file.arrayBuffer());
-
                             if (checkHeader(fileData, encryptionHeader)) {
                                 const decryptedData = decryptFile(fileData, key);
-
                                 const writable = await fileHandle.createWritable();
                                 await writable.write(decryptedData);
                                 await writable.close();
                             }
-
                             processedFiles++;
-                            const progress = 35 + (processedFiles / totalFiles) * 55;
-                            updateProgress(progress, `正在处理文件: ${processedFiles}/${totalFiles}`);
-
-                        } catch (fileError) {
-                            console.warn(`处理文件 ${fileHandle.name} 时出错:`, fileError);
-                        }
+                            updateProgress(35 + (processedFiles / totalFiles) * 55, `正在处理文件: ${processedFiles}/${totalFiles}`);
+                        } catch (fileError) { console.warn(`处理文件 ${fileHandle.name} 时出错:`, fileError); }
                     }
-
                     updateProgress(100, '文件夹解密完成！');
                 }
 
                 function checkHeader(fileData, header) {
                     if (fileData.length < header.length) return false;
-
-                    for (let i = 0; i < header.length; i++) {
-                        if (fileData[i] !== header[i]) return false;
-                    }
-
+                    for (let i = 0; i < header.length; i++) if (fileData[i] !== header[i]) return false;
                     return true;
                 }
 
                 async function getKey(currentFileData, manifestName) {
                     const encryptedData = currentFileData.slice(4);
-
                     const encoder = new TextEncoder();
                     const manifestBytes = encoder.encode(manifestName);
                     const source = new Uint8Array(manifestBytes.length + 1);
                     source.set(manifestBytes);
                     source[manifestBytes.length] = 0x0A;
-
                     const key = xor(encryptedData, source);
                     return optimizeKey(key);
                 }
 
                 function xor(data, key) {
                     const result = new Uint8Array(data.length);
-                    for (let i = 0; i < data.length; i++) {
-                        result[i] = data[i] ^ key[i % key.length];
-                    }
+                    for (let i = 0; i < data.length; i++) result[i] = data[i] ^ key[i % key.length];
                     return result;
                 }
 
@@ -1320,26 +1182,15 @@ License: GPL v3.0
                     if (key.length === 16) {
                         const firstHalf = key.slice(0, 8);
                         const secondHalf = key.slice(8, 16);
-
                         let isSame = true;
-                        for (let i = 0; i < 8; i++) {
-                            if (firstHalf[i] !== secondHalf[i]) {
-                                isSame = false;
-                                break;
-                            }
-                        }
-
-                        if (isSame) {
-                            return firstHalf;
-                        }
+                        for (let i = 0; i < 8; i++) if (firstHalf[i] !== secondHalf[i]) { isSame = false; break; }
+                        if (isSame) return firstHalf;
                     }
-
                     return key;
                 }
 
                 function decryptFile(fileData, key) {
-                    const encryptedData = fileData.slice(4);
-                    return xor(encryptedData, key);
+                    return xor(fileData.slice(4), key);
                 }
             });
         })();
