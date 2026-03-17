@@ -4,7 +4,7 @@
 
 这是一个完全在浏览器中运行的网易版Minecraft存档解密工具，无需安装任何软件，无需上传文件到服务器，所有操作均在本地完成并且完全开源，保护用户隐私。
 
-### **近期新增**（2026年3月14日）
+### **近期更新**
 
 - 请参阅 [CHANGELOG](CHANGELOG.md) 文件
 
@@ -77,7 +77,7 @@
 
 2. English version
 
-Visit the deployment page directly (Note: This English page is translated by Deepseek. If there are any errors, they are not our responsibility.):
+Visit the deployment page directly (Note: This English page has been machine-translated using DeepSeek. The project provider assumes no liability for any errors or ambiguities arising from the machine translation.):
 [https://en.mc.hm0.top/](https://en.mc.hm0.top/)
 
 ### 本地运行
