@@ -1,10 +1,5 @@
 <!DOCTYPE html>
 <html lang="en">
-<!-- 
-NetEaseMCDecryptor
-GitHub: https://github.com/ihaiming/NetEaseMC-Decryptor
-License: GPL v3.0
--->
 <head>
     <meta charset="UTF-8">
     <meta http-equiv="Cache-Control" content="no-store, no-cache, must-revalidate">
@@ -309,7 +304,6 @@ License: GPL v3.0
             margin-top: 12px;
         }
 
-        /* Footer styles (simple, no extra icons) */
         footer {
             max-width: 800px;
             margin: 20px auto 0;
@@ -331,7 +325,6 @@ License: GPL v3.0
             color: #5a4793;
         }
 
-        /* SweetAlert-style popup */
         .sweet-alert-overlay {
             position: fixed;
             top: 0;
@@ -432,7 +425,6 @@ License: GPL v3.0
             transform: scale(0.98);
         }
 
-        /* About us button */
         .about-btn {
             position: fixed;
             bottom: 20px;
@@ -464,7 +456,6 @@ License: GPL v3.0
             transform: translateY(0);
         }
 
-        /* Mobile optimizations */
         @media (max-width: 600px) {
             .container {
                 margin: 0;
@@ -513,7 +504,6 @@ License: GPL v3.0
             }
         }
 
-        /* PC optimizations */
         @media (min-width: 1024px) {
             .container {
                 max-width: 1000px;
@@ -610,7 +600,7 @@ License: GPL v3.0
             <strong>Important Reminder:</strong><br>
             1. When using the "Select Folder" function for decryption, original files will be overwritten directly! Please make sure to back up your saves, especially the "/db" directory!<br>
             2. The decryption process is completely performed locally in your browser; files are not uploaded to any server.<br>
-            3. To decrypt ZIP files, please compress all files in the "/db" directory and upload the ZIP file. It is recommended to use "Store" compression level.<br>
+            3. You can now upload the entire save ZIP archive. The tool will automatically locate and decrypt the db directory, generating a complete, ready-to-use save package.<br>
             <span style="color: red; font-size: large; font-weight: bold;">Please be advised that this English page has been machine-translated using DeepSeek. The project provider assumes no liability for any errors or ambiguities arising from the machine translation. Furthermore, this project is fully compliant with the GPL v3.0 open-source license.</span>
         </div>
 
@@ -640,20 +630,17 @@ License: GPL v3.0
         </div>
     </div>
 
-    <!-- Footer -->
     <footer>
         <a href="https://www.gnu.org/licenses/gpl-3.0" target="_blank" rel="license noopener noreferrer">
             <img src="https://img.shields.io/badge/License-GPLv3-blue.svg" alt="License: GPL v3"></a>
         <br>
         <a href="https://hm0.top/start-page.html" target="_blank">Contact Us</a>
         <br>
-        <a href="https://hm0.top/go/mc.html" target="_blank">Deploy the same project</a>
+        <a href="https://hm0.top/go/mc.html" target="_blank">Github</a>
     </footer>
 
-    <!-- About Us Button -->
     <button class="about-btn" id="aboutBtn" title="About Us">?</button>
 
-    <!-- About Us Popup -->
     <div class="sweet-alert-overlay" id="sweetAlertOverlay">
         <div class="sweet-alert-modal">
             <div class="sweet-alert-header">
@@ -672,7 +659,6 @@ License: GPL v3.0
         </div>
     </div>
 
-    <!-- Version Update Popup -->
     <div class="sweet-alert-overlay" id="versionAlertOverlay">
         <div class="sweet-alert-modal">
             <div class="sweet-alert-header">
@@ -692,8 +678,7 @@ License: GPL v3.0
         (function() {
             'use strict';
 
-            // Version check constants
-            const CURRENT_VERSION = '1.3.1';
+            const CURRENT_VERSION = '1.4.0';
             const VERSION_CHECK_URL = 'https://mc.hm0.top/upload/version.json';
             const COOKIE_IGNORE_FOREVER = 'version_ignore_forever';
             const COOKIE_LAST_REMIND = 'version_last_remind';
@@ -744,21 +729,17 @@ License: GPL v3.0
                     isProcessing: false
                 };
 
-                // Intelligent detection based on localStorage and UA
                 const pseudoUnsupported = localStorage.getItem('fsApiPseudoUnsupported') === 'true';
                 const hasApi = 'showDirectoryPicker' in window;
 
-                // Extract Chrome version
                 const ua = navigator.userAgent;
                 const chromeMatch = ua.match(/\bChrome\/(\d+)(?:\.\d+)*\b/);
                 const chromeVer = chromeMatch ? parseInt(chromeMatch[1], 10) : null;
 
-                // If Chrome version is below 86 and not yet marked, mark as pseudo unsupported
                 if (chromeVer !== null && chromeVer < 86 && !pseudoUnsupported) {
                     localStorage.setItem('fsApiPseudoUnsupported', 'true');
                 }
 
-                // Show or hide button based on mark
                 if (localStorage.getItem('fsApiPseudoUnsupported') === 'true') {
                     fsApiBtn.style.display = 'none';
                     const note = document.createElement('p');
@@ -777,7 +758,6 @@ License: GPL v3.0
                     }
                 }
 
-                // About Us functionality
                 aboutBtn.addEventListener('click', () => {
                     sweetAlertOverlay.classList.add('show');
                     document.body.style.overflow = 'hidden';
@@ -803,7 +783,6 @@ License: GPL v3.0
                     document.body.style.overflow = 'hidden';
                 }, 800);
 
-                // Version check
                 function checkVersion() {
                     fetch(VERSION_CHECK_URL, { cache: 'no-cache' })
                         .then(response => {
@@ -905,7 +884,6 @@ License: GPL v3.0
 
                 processBtn.addEventListener('click', startProcessing);
 
-                // Detect pseudo support on first click
                 async function selectDirectory() {
                     if (localStorage.getItem('fsApiPseudoUnsupported') === 'true') {
                         status.innerHTML = '<span class="error">Current browser does not support folder selection</span>';
@@ -915,7 +893,7 @@ License: GPL v3.0
                     }
 
                     let pickerShown = false;
-                    const timeout = 1000; // timeout 1000ms
+                    const timeout = 1000;
                     const timer = setTimeout(() => { pickerShown = true; }, timeout);
 
                     try {
@@ -1033,44 +1011,87 @@ License: GPL v3.0
                     updateProgress(5, 'Reading ZIP file...');
                     let zip;
                     try { zip = await JSZip.loadAsync(state.currentFile); } catch (zipError) { throw new Error('Failed to read ZIP file: ' + zipError.message); }
+
                     updateProgress(15, 'Analyzing save structure...');
-                    let currentFileEntry = null, manifestFileEntry = null, fileList = [];
+                    
+                    let currentFileEntry = null;
+                    let manifestFileEntry = null;
+                    let targetDir = '';
+                    
+                    const allFiles = [];
                     zip.forEach((relativePath, zipEntry) => {
                         if (zipEntry.dir) return;
-                        fileList.push(zipEntry);
-                        if (relativePath === 'CURRENT') currentFileEntry = zipEntry;
-                        else if (relativePath.startsWith('MANIFEST')) manifestFileEntry = zipEntry;
+                        allFiles.push(zipEntry);
+                        
+                        if (relativePath.endsWith('CURRENT') && !currentFileEntry) {
+                            const pathParts = relativePath.split('/');
+                            if (pathParts.length > 1) {
+                                currentFileEntry = zipEntry;
+                                targetDir = relativePath.substring(0, relativePath.lastIndexOf('/') + 1);
+                            } else if (!currentFileEntry) {
+                                currentFileEntry = zipEntry;
+                                targetDir = '';
+                            }
+                        }
                     });
-                    if (!currentFileEntry) throw new Error('CURRENT file not found. This may not be a valid NetEase Edition save');
-                    if (!manifestFileEntry) throw new Error('MANIFEST file not found. This may not be a valid NetEase Edition save');
+
+                    if (!currentFileEntry) throw new Error('CURRENT file not found. Please ensure this is a valid NetEase Edition save');
+
+                    zip.forEach((relativePath, zipEntry) => {
+                        if (zipEntry.dir) return;
+                        if (relativePath === targetDir + 'MANIFEST' || relativePath.startsWith(targetDir + 'MANIFEST-')) {
+                            manifestFileEntry = zipEntry;
+                        }
+                    });
+
+                    if (!manifestFileEntry) throw new Error(`MANIFEST file not found in "${targetDir || 'root directory'}". Please ensure this is a valid NetEase Edition save`);
+
                     updateProgress(25, 'Getting decryption key...');
                     let currentFileData;
                     try { currentFileData = await currentFileEntry.async('uint8array'); } catch (readError) { throw new Error('Failed to read CURRENT file: ' + readError.message); }
+                    
                     const encryptionHeader = new Uint8Array([0x80, 0x1D, 0x30, 0x01]);
                     if (!checkHeader(currentFileData, encryptionHeader)) throw new Error('Save is not encrypted or uses old encryption, cannot decrypt');
-                    const manifestName = manifestFileEntry.name;
+                    
+                    const manifestName = manifestFileEntry.name.split('/').pop();
                     const key = await getKey(currentFileData, manifestName);
-                    updateProgress(35, 'Starting file decryption...');
+                    
+                    updateProgress(35, 'Decrypting and repacking files...');
                     const newZip = new JSZip();
+                    
+                    const totalFiles = allFiles.length;
                     let processedFiles = 0;
-                    const totalFiles = fileList.length;
-                    for (const zipEntry of fileList) {
+                    
+                    for (const zipEntry of allFiles) {
                         try {
                             const fileData = await zipEntry.async('uint8array');
-                            if (checkHeader(fileData, encryptionHeader)) {
-                                newZip.file(zipEntry.name, decryptFile(fileData, key));
+                            const entryPath = zipEntry.name;
+                            
+                            const isInTargetDir = entryPath.startsWith(targetDir);
+                            
+                            if (isInTargetDir && checkHeader(fileData, encryptionHeader)) {
+                                newZip.file(entryPath, decryptFile(fileData, key));
                             } else {
-                                newZip.file(zipEntry.name, fileData);
+                                newZip.file(entryPath, fileData);
                             }
+                            
                             processedFiles++;
-                            updateProgress(35 + (processedFiles / totalFiles) * 55, `Processing file: ${processedFiles}/${totalFiles}`);
-                        } catch (fileError) { console.warn(`Error processing file ${zipEntry.name}:`, fileError); }
+                            updateProgress(35 + (processedFiles / totalFiles) * 55, `Processing: ${processedFiles}/${totalFiles}`);
+                        } catch (fileError) { 
+                            console.warn(`Error processing file ${zipEntry.name}:`, fileError); 
+                        }
                     }
-                    updateProgress(95, 'Generating decrypted ZIP file...');
-                    const content = await newZip.generateAsync({ type: 'blob', compression: 'DEFLATE', compressionOptions: { level: 6 } });
+
+                    updateProgress(95, 'Generating complete decrypted save...');
+                    const content = await newZip.generateAsync({ 
+                        type: 'blob', 
+                        compression: 'DEFLATE', 
+                        compressionOptions: { level: 6 } 
+                    });
+                    
                     const url = URL.createObjectURL(content);
                     downloadBtn.href = url;
-                    downloadBtn.download = state.currentFile.name.replace('.zip', '_decrypted.zip') || 'mc_decrypted.zip';
+                    downloadBtn.download = state.currentFile.name.replace(/\.zip$/i, '_decrypted.zip') || 'mc_decrypted_world.zip';
                 }
 
                 async function processDirectory() {
@@ -1094,7 +1115,7 @@ License: GPL v3.0
                     updateProgress(25, 'Getting decryption key...');
                     const manifestName = manifestFileHandle.name;
                     const key = await getKey(currentFileData, manifestName);
-                    updateProgress(35, 'Starting file decryption...');
+                    updateProgress(35, 'Decrypting files...');
                     let processedFiles = 0;
                     const totalFiles = fileHandles.length;
                     for (const fileHandle of fileHandles) {
@@ -1155,9 +1176,4 @@ License: GPL v3.0
         })();
     </script>
 </body>
-<!-- 
-NetEaseMCDecryptor
-GitHub: https://github.com/ihaiming/NetEaseMC-Decryptor
-License: GPL v3.0
--->
 </html>
