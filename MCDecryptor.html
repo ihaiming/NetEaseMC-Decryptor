@@ -78,7 +78,7 @@
             color: #D84315;
         }
         
-        。upload-area {
+        .upload-area {
             border: 2px dashed var(--outline);
             border-radius: 16px;
             padding: 40px 24px;
@@ -113,7 +113,7 @@
             display: none;
         }
         
-        。browse-btn {
+        .browse-btn {
             background-color: var(--primary);
             color: var(--on-primary);
             border: none;
@@ -138,7 +138,7 @@
             box-shadow: 0 1px 2px rgba(0, 0, 0, 0.08);
         }
         
-        。process-btn {
+        .process-btn {
             background-color: var(--primary);
             color: var(--on-primary);
             border: none;
@@ -167,7 +167,7 @@
             box-shadow: none;
         }
         
-        。status {
+        .status {
             margin-top: 24px;
             padding: 16px;
             border-radius: 12px;
@@ -196,7 +196,7 @@
             transition: width 0.3s ease;
         }
         
-        。progress-text {
+        .progress-text {
             position: absolute;
             right: 8px;
             top: 50%;
@@ -325,7 +325,7 @@
             color: #5a4793;
         }
         
-        。sweet-alert-overlay {
+        .sweet-alert-overlay {
             position: fixed;
             top: 0;
             left: 0;
@@ -425,7 +425,7 @@
             transform: scale(0.98);
         }
         
-        。about-btn {
+        .about-btn {
             position: fixed;
             bottom: 20px;
             right: 20px;
@@ -609,7 +609,7 @@
             <strong>重要提醒：</strong><br>
             1. 使用"选择文件夹"功能解密时，会直接覆盖原文件！请务必备份您的存档，特别是"存档/db"目录！<br>
             2. 解密过程完全在浏览器本地进行，文件不会上传到服务器<br>
-            3. 现在支持直接上传整个存档的ZIP压缩包，工具会自动定位并解密db目录，最终生成一个完整的、可直接使用的存档包。
+            3. 现在支持直接上传整个存档的ZIP压缩包，工具会自动定位并解密db目录，最终生成一个完整的、可直接使用的存档包。压缩级别建议选"仅存储"。
         </div>
 
         <div class="card">
@@ -661,7 +661,7 @@
                 <br>
                 如有问题，点击下方联系我们
                 <br>
-                <span style="color: #E65100;">To make our content more accessible to non-Chinese speakers, we’ve added an English version of this page. Please note that this English page has been machine-translated using DeepSeek. Additionally, this project is fully compliant with the GPL v3.0 open-source license.
+                <span style="color: #E65100;">To make our content more accessible to non-Chinese speakers, we’ve added an English version of this page.
                 </span>
             </div>
             <div class="sweet-alert-footer">
@@ -689,7 +689,8 @@
         (function() {
             'use strict';
 
-            const CURRENT_VERSION = '1.4.0';
+            const CURRENT_VERSION = '1.4.10;
+            const CURRENT_BUILD = 1410;
             const VERSION_CHECK_URL = 'https://mc.hm0.top/upload/version.json';
             const COOKIE_IGNORE_FOREVER = 'version_ignore_forever';
             const COOKIE_LAST_REMIND = 'version_last_remind';
@@ -802,6 +803,7 @@
                         })
                         .then(data => {
                             const latestVersion = data.latest;
+                            const latestBuild = data.build || 0;
                             const ignoreVersion = getCookie(COOKIE_IGNORE_FOREVER);
                             if (ignoreVersion && ignoreVersion === latestVersion) return;
                             const lastRemind = getCookie(COOKIE_LAST_REMIND);
@@ -810,7 +812,7 @@
                                 const now = Date.now();
                                 if (now - last < 24 * 60 * 60 * 1000) return;
                             }
-                            if (latestVersion && latestVersion !== CURRENT_VERSION) {
+                            if (latestBuild > CURRENT_BUILD) {
                                 showVersionAlert(latestVersion, data.message || '发现新版本，建议更新以获取更好体验。', data.changelog);
                             }
                         })
