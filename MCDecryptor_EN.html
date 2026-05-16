@@ -600,8 +600,8 @@
             <strong>Important Reminder:</strong><br>
             1. When using the "Select Folder" function for decryption, original files will be overwritten directly! Please make sure to back up your saves, especially the "/db" directory!<br>
             2. The decryption process is completely performed locally in your browser; files are not uploaded to any server.<br>
-            3. You can now upload the entire save ZIP archive. The tool will automatically locate and decrypt the db directory, generating a complete, ready-to-use save package.<br>
-            <span style="color: red; font-size: large; font-weight: bold;">Please be advised that this English page has been machine-translated using DeepSeek. The project provider assumes no liability for any errors or ambiguities arising from the machine translation. Furthermore, this project is fully compliant with the GPL v3.0 open-source license.</span>
+            3. You can now upload the entire save ZIP archive. The tool will automatically locate and decrypt the db directory, generating a complete, ready-to-use save package. It is recommended to use "Store" (no compression) compression level.<br>
+            <span style="font-style: italic; color: #666;">Please be advised that this English page has been machine-translated using DeepSeek. The project provider assumes no liability for any errors or ambiguities arising from the machine translation. Furthermore, this project is fully compliant with the GPL v3.0 open-source license.</span>
         </div>
 
         <div class="card">
@@ -636,7 +636,7 @@
         <br>
         <a href="https://hm0.top/start-page.html" target="_blank">Contact Us</a>
         <br>
-        <a href="https://hm0.top/go/mc.html" target="_blank">Github</a>
+        <a href="https://hm0.top/go/mc.html" target="_blank">Deploy the same project</a>
     </footer>
 
     <button class="about-btn" id="aboutBtn" title="About Us">?</button>
@@ -678,7 +678,8 @@
         (function() {
             'use strict';
 
-            const CURRENT_VERSION = '1.4.0';
+            const CURRENT_VERSION = '1.4.1';
+            const CURRENT_BUILD = 1410;
             const VERSION_CHECK_URL = 'https://mc.hm0.top/upload/version.json';
             const COOKIE_IGNORE_FOREVER = 'version_ignore_forever';
             const COOKIE_LAST_REMIND = 'version_last_remind';
@@ -791,6 +792,7 @@
                         })
                         .then(data => {
                             const latestVersion = data.latest;
+                            const latestBuild = data.build || 0;
                             const ignoreVersion = getCookie(COOKIE_IGNORE_FOREVER);
                             if (ignoreVersion && ignoreVersion === latestVersion) return;
                             const lastRemind = getCookie(COOKIE_LAST_REMIND);
@@ -799,7 +801,7 @@
                                 const now = Date.now();
                                 if (now - last < 24 * 60 * 60 * 1000) return;
                             }
-                            if (latestVersion && latestVersion !== CURRENT_VERSION) {
+                            if (latestBuild > CURRENT_BUILD) {
                                 showVersionAlert(latestVersion, data.message || 'A new version is available. It is recommended to update.', data.changelog);
                             }
                         })
