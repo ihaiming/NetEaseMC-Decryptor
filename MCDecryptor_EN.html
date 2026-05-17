@@ -668,8 +668,6 @@
                 A new version is available.
             </div>
             <div class="sweet-alert-footer" id="versionAlertFooter">
-                <button class="sweet-alert-btn" id="versionRemindLater">Remind me later (24h)</button>
-                <button class="sweet-alert-btn" id="versionIgnoreForever">Don't remind again</button>
             </div>
         </div>
     </div>
@@ -678,8 +676,8 @@
         (function() {
             'use strict';
 
-            const CURRENT_VERSION = '1.4.1';
-            const CURRENT_BUILD = 1410;
+            const CURRENT_VERSION = '1.4.2';
+            const CURRENT_BUILD = 1420;
             const VERSION_CHECK_URL = 'https://mc.hm0.top/upload/version.json';
             const COOKIE_IGNORE_FOREVER = 'version_ignore_forever';
             const COOKIE_LAST_REMIND = 'version_last_remind';
@@ -720,8 +718,7 @@
 
                 const versionAlertOverlay = document.getElementById('versionAlertOverlay');
                 const versionAlertContent = document.getElementById('versionAlertContent');
-                const versionRemindLater = document.getElementById('versionRemindLater');
-                const versionIgnoreForever = document.getElementById('versionIgnoreForever');
+                const versionAlertFooter = document.getElementById('versionAlertFooter');
 
                 const state = {
                     currentFile: null,
@@ -793,22 +790,38 @@
                         .then(data => {
                             const latestVersion = data.latest;
                             const latestBuild = data.build || 0;
-                            const ignoreVersion = getCookie(COOKIE_IGNORE_FOREVER);
-                            if (ignoreVersion && ignoreVersion === latestVersion) return;
-                            const lastRemind = getCookie(COOKIE_LAST_REMIND);
-                            if (lastRemind) {
-                                const last = parseInt(lastRemind, 10);
-                                const now = Date.now();
-                                if (now - last < 24 * 60 * 60 * 1000) return;
+                            const forceUpdate = data.force_update === true;
+                            const forceConfirm = data.force_confirm === true;
+                            const forceConfirmMessage = data.force_confirm_message_en || '';
+                            const forceConfirmDelay = data.force_confirm_delay || 0;
+
+                            if (!forceUpdate) {
+                                const ignoreVersion = getCookie(COOKIE_IGNORE_FOREVER);
+                                if (ignoreVersion && ignoreVersion === latestVersion) return;
+                                const lastRemind = getCookie(COOKIE_LAST_REMIND);
+                                if (lastRemind) {
+                                    const last = parseInt(lastRemind, 10);
+                                    const now = Date.now();
+                                    if (now - last < 24 * 60 * 60 * 1000) return;
+                                }
                             }
+
                             if (latestBuild > CURRENT_BUILD) {
-                                showVersionAlert(latestVersion, data.message || 'A new version is available. It is recommended to update.', data.changelog);
+                                showVersionAlert(
+                                    latestVersion,
+                                    data.message_en || data.message || 'A new version is available. It is recommended to update.',
+                                    data.changelog,
+                                    forceUpdate,
+                                    forceConfirm,
+                                    forceConfirmMessage,
+                                    forceConfirmDelay
+                                );
                             }
                         })
                         .catch(err => console.log('Version check failed:', err));
                 }
 
-                function showVersionAlert(latestVersion, message, changelogUrl) {
+                function showVersionAlert(latestVersion, message, changelogUrl, forceUpdate, forceConfirm, forceConfirmMessage, forceConfirmDelay) {
                     let contentHtml = `<p>Current version: ${CURRENT_VERSION}<br>Latest version: ${latestVersion}</p>`;
                     contentHtml += `<p>${message}</p>`;
                     if (changelogUrl) contentHtml += `<p><a href="${changelogUrl}" target="_blank" style="color: var(--primary);">View changelog</a></p>`;
@@ -816,21 +829,63 @@
                     versionAlertOverlay.classList.add('show');
                     document.body.style.overflow = 'hidden';
 
-                    versionRemindLater.replaceWith(versionRemindLater.cloneNode(true));
-                    versionIgnoreForever.replaceWith(versionIgnoreForever.cloneNode(true));
-                    const newRemindLater = document.getElementById('versionRemindLater');
-                    const newIgnoreForever = document.getElementById('versionIgnoreForever');
-
-                    newRemindLater.addEventListener('click', () => {
-                        setCookie(COOKIE_LAST_REMIND, Date.now(), 1);
-                        versionAlertOverlay.classList.remove('show');
-                        document.body.style.overflow = '';
-                    });
-                    newIgnoreForever.addEventListener('click', () => {
-                        setCookie(COOKIE_IGNORE_FOREVER, latestVersion, 3650);
-                        versionAlertOverlay.classList.remove('show');
-                        document.body.style.overflow = '';
-                    });
+                    if (forceUpdate && forceConfirm) {
+                        versionAlertFooter.innerHTML = '<button class="sweet-alert-btn" id="versionForceStep1">OK</button>';
+                        document.getElementById('versionForceStep1').addEventListener('click', () => {
+                            const confirmMsg = forceConfirmMessage || '⚠️ This version contains critical updates. Immediate update is strongly recommended.';
+                            versionAlertContent.innerHTML = `
+                                <p>Current version: ${CURRENT_VERSION}<br>Latest version: ${latestVersion}</p>
+                                <p style="color: var(--error); font-weight: bold;">${confirmMsg}</p>
+                            `;
+                            const delay = parseInt(forceConfirmDelay) || 0;
+                            if (delay > 0) {
+                                versionAlertFooter.innerHTML = `<button class="sweet-alert-btn" id="versionForceStep2" disabled>I understand (${delay}s)</button>`;
+                                const btn = document.getElementById('versionForceStep2');
+                                let countdown = delay;
+                                const timer = setInterval(() => {
+                                    countdown--;
+                                    btn.textContent = `I understand (${countdown}s)`;
+                                    if (countdown <= 0) {
+                                        clearInterval(timer);
+                                        btn.textContent = 'I understand';
+                                        btn.disabled = false;
+                                    }
+                                }, 1000);
+                                btn.addEventListener('click', () => {
+                                    clearInterval(timer);
+                                    versionAlertOverlay.classList.remove('show');
+                                    document.body.style.overflow = '';
+                                });
+                            } else {
+                                versionAlertFooter.innerHTML = '<button class="sweet-alert-btn" id="versionForceStep2">I understand</button>';
+                                document.getElementById('versionForceStep2').addEventListener('click', () => {
+                                    versionAlertOverlay.classList.remove('show');
+                                    document.body.style.overflow = '';
+                                });
+                            }
+                        });
+                    } else if (forceUpdate) {
+                        versionAlertFooter.innerHTML = '<button class="sweet-alert-btn" id="versionForceConfirm">Got it</button>';
+                        document.getElementById('versionForceConfirm').addEventListener('click', () => {
+                            versionAlertOverlay.classList.remove('show');
+                            document.body.style.overflow = '';
+                        });
+                    } else {
+                        versionAlertFooter.innerHTML = `
+                            <button class="sweet-alert-btn" id="versionRemindLaterNew">Remind me later (24h)</button>
+                            <button class="sweet-alert-btn" id="versionIgnoreForeverNew">Don't remind again</button>
+                        `;
+                        document.getElementById('versionRemindLaterNew').addEventListener('click', () => {
+                            setCookie(COOKIE_LAST_REMIND, Date.now(), 1);
+                            versionAlertOverlay.classList.remove('show');
+                            document.body.style.overflow = '';
+                        });
+                        document.getElementById('versionIgnoreForeverNew').addEventListener('click', () => {
+                            setCookie(COOKIE_IGNORE_FOREVER, latestVersion, 3650);
+                            versionAlertOverlay.classList.remove('show');
+                            document.body.style.overflow = '';
+                        });
+                    }
                 }
 
                 versionAlertOverlay.addEventListener('click', (e) => {
