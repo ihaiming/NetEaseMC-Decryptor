@@ -16,7 +16,7 @@
 
 ### 我应该选择哪个项目？
 
-| 需求场景 / 工具特点 | **[浏览器前端版](https://github.com/ihaiming/NetEaseMC-Decryptor/)** | **[C语言工具](https://github.com/Carbonateds/MCWorld-Converter)** | **[Java版工具](https://github.com/Jerbvsjhs/NeteaseMcDencrypter)** | **[NodeJS 版工具](https://github.com/HTMonkeyG/XOR-MC-Archive-Decrypt/)** |
+| 需求场景 / 工具特点 | **[浏览器前端版(本项目)](https://github.com/ihaiming/NetEaseMC-Decryptor/)** | **[C语言工具](https://github.com/Carbonateds/MCWorld-Converter)** | **[Java版工具](https://github.com/Jerbvsjhs/NeteaseMcDencrypter)** | **[NodeJS 版工具](https://github.com/HTMonkeyG/XOR-MC-Archive-Decrypt/)** |
 | :--- | :--- | :--- | :--- | :--- |
 | **典型用户** | **任何用户**，尤其是**临时、快速**使用，或**重视隐私**、**使用非Windows系统**的用户 | 熟悉命令行、追求极简执行的Windows用户 | 需要批量处理、或希望将解密功能**集成到其他程序**中的开发者/高级用户 | 习惯使用 Node.js 环境、喜欢脚本化或希望**轻量集成**的开发者 |
 | **核心优势** | **零安装、零部署**，在任何有现代浏览器的设备上**立即使用**；**操作全在本地**，文件不上传 | 单个可执行文件，不依赖运行时环境，原生性能 | 功能完整，提供编程接口，适合自动化脚本调用 | 基于 Node.js，易于安装与跨平台运行；适合作为模块嵌入其他 JS/TS 项目 |
