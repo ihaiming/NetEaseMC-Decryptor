@@ -662,7 +662,6 @@
                 如有问题，点击下方联系我们
                 <br>
                 <span style="color: #E65100;">To make our content more accessible to non-Chinese speakers, we’ve added an English version of this page.
-                </span>
             </div>
             <div class="sweet-alert-footer">
                 <button class="sweet-alert-btn" id="sweetAlertConfirmBtn">确定</button>
@@ -679,8 +678,6 @@
                 检测到新版本，建议更新。
             </div>
             <div class="sweet-alert-footer" id="versionAlertFooter">
-                <button class="sweet-alert-btn" id="versionRemindLater">24小时内不再提醒</button>
-                <button class="sweet-alert-btn" id="versionIgnoreForever">不再提醒</button>
             </div>
         </div>
     </div>
@@ -689,8 +686,8 @@
         (function() {
             'use strict';
 
-            const CURRENT_VERSION = '1.4.10;
-            const CURRENT_BUILD = 1410;
+            const CURRENT_VERSION = '1.4.2';
+            const CURRENT_BUILD = 1420;
             const VERSION_CHECK_URL = 'https://mc.hm0.top/upload/version.json';
             const COOKIE_IGNORE_FOREVER = 'version_ignore_forever';
             const COOKIE_LAST_REMIND = 'version_last_remind';
@@ -731,8 +728,7 @@
 
                 const versionAlertOverlay = document.getElementById('versionAlertOverlay');
                 const versionAlertContent = document.getElementById('versionAlertContent');
-                const versionRemindLater = document.getElementById('versionRemindLater');
-                const versionIgnoreForever = document.getElementById('versionIgnoreForever');
+                const versionAlertFooter = document.getElementById('versionAlertFooter');
 
                 const state = {
                     currentFile: null,
@@ -804,22 +800,38 @@
                         .then(data => {
                             const latestVersion = data.latest;
                             const latestBuild = data.build || 0;
-                            const ignoreVersion = getCookie(COOKIE_IGNORE_FOREVER);
-                            if (ignoreVersion && ignoreVersion === latestVersion) return;
-                            const lastRemind = getCookie(COOKIE_LAST_REMIND);
-                            if (lastRemind) {
-                                const last = parseInt(lastRemind, 10);
-                                const now = Date.now();
-                                if (now - last < 24 * 60 * 60 * 1000) return;
+                            const forceUpdate = data.force_update === true;
+                            const forceConfirm = data.force_confirm === true;
+                            const forceConfirmMessage = data.force_confirm_message_zh || '';
+                            const forceConfirmDelay = data.force_confirm_delay || 0;
+
+                            if (!forceUpdate) {
+                                const ignoreVersion = getCookie(COOKIE_IGNORE_FOREVER);
+                                if (ignoreVersion && ignoreVersion === latestVersion) return;
+                                const lastRemind = getCookie(COOKIE_LAST_REMIND);
+                                if (lastRemind) {
+                                    const last = parseInt(lastRemind, 10);
+                                    const now = Date.now();
+                                    if (now - last < 24 * 60 * 60 * 1000) return;
+                                }
                             }
+
                             if (latestBuild > CURRENT_BUILD) {
-                                showVersionAlert(latestVersion, data.message || '发现新版本，建议更新以获取更好体验。', data.changelog);
+                                showVersionAlert(
+                                    latestVersion,
+                                    data.message_zh || data.message || '发现新版本，建议更新。',
+                                    data.changelog,
+                                    forceUpdate,
+                                    forceConfirm,
+                                    forceConfirmMessage,
+                                    forceConfirmDelay
+                                );
                             }
                         })
                         .catch(err => console.log('版本检测失败:', err));
                 }
 
-                function showVersionAlert(latestVersion, message, changelogUrl) {
+                function showVersionAlert(latestVersion, message, changelogUrl, forceUpdate, forceConfirm, forceConfirmMessage, forceConfirmDelay) {
                     let contentHtml = `<p>当前版本：${CURRENT_VERSION}<br>最新版本：${latestVersion}</p>`;
                     contentHtml += `<p>${message}</p>`;
                     if (changelogUrl) contentHtml += `<p><a href="${changelogUrl}" target="_blank" style="color: var(--primary);">查看更新日志</a></p>`;
@@ -827,21 +839,63 @@
                     versionAlertOverlay.classList.add('show');
                     document.body.style.overflow = 'hidden';
 
-                    versionRemindLater.replaceWith(versionRemindLater.cloneNode(true));
-                    versionIgnoreForever.replaceWith(versionIgnoreForever.cloneNode(true));
-                    const newRemindLater = document.getElementById('versionRemindLater');
-                    const newIgnoreForever = document.getElementById('versionIgnoreForever');
-
-                    newRemindLater.addEventListener('click', () => {
-                        setCookie(COOKIE_LAST_REMIND, Date.now(), 1);
-                        versionAlertOverlay.classList.remove('show');
-                        document.body.style.overflow = '';
-                    });
-                    newIgnoreForever.addEventListener('click', () => {
-                        setCookie(COOKIE_IGNORE_FOREVER, latestVersion, 3650);
-                        versionAlertOverlay.classList.remove('show');
-                        document.body.style.overflow = '';
-                    });
+                    if (forceUpdate && forceConfirm) {
+                        versionAlertFooter.innerHTML = '<button class="sweet-alert-btn" id="versionForceStep1">知道了</button>';
+                        document.getElementById('versionForceStep1').addEventListener('click', () => {
+                            const confirmMsg = forceConfirmMessage || '⚠️ 此版本包含极重要更新，强烈建议您立即更新！！';
+                            versionAlertContent.innerHTML = `
+                                <p>当前版本：${CURRENT_VERSION}<br>最新版本：${latestVersion}</p>
+                                <p style="color: var(--error); font-weight: bold;">${confirmMsg}</p>
+                            `;
+                            const delay = parseInt(forceConfirmDelay) || 0;
+                            if (delay > 0) {
+                                versionAlertFooter.innerHTML = `<button class="sweet-alert-btn" id="versionForceStep2" disabled>确认已知晓 (${delay}s)</button>`;
+                                const btn = document.getElementById('versionForceStep2');
+                                let countdown = delay;
+                                const timer = setInterval(() => {
+                                    countdown--;
+                                    btn.textContent = `确认已知晓 (${countdown}s)`;
+                                    if (countdown <= 0) {
+                                        clearInterval(timer);
+                                        btn.textContent = '确认已知晓';
+                                        btn.disabled = false;
+                                    }
+                                }, 1000);
+                                btn.addEventListener('click', () => {
+                                    clearInterval(timer);
+                                    versionAlertOverlay.classList.remove('show');
+                                    document.body.style.overflow = '';
+                                });
+                            } else {
+                                versionAlertFooter.innerHTML = '<button class="sweet-alert-btn" id="versionForceStep2">确认已知晓</button>';
+                                document.getElementById('versionForceStep2').addEventListener('click', () => {
+                                    versionAlertOverlay.classList.remove('show');
+                                    document.body.style.overflow = '';
+                                });
+                            }
+                        });
+                    } else if (forceUpdate) {
+                        versionAlertFooter.innerHTML = '<button class="sweet-alert-btn" id="versionForceConfirm">我知道了</button>';
+                        document.getElementById('versionForceConfirm').addEventListener('click', () => {
+                            versionAlertOverlay.classList.remove('show');
+                            document.body.style.overflow = '';
+                        });
+                    } else {
+                        versionAlertFooter.innerHTML = `
+                            <button class="sweet-alert-btn" id="versionRemindLaterNew">24小时内不再提醒</button>
+                            <button class="sweet-alert-btn" id="versionIgnoreForeverNew">不再提醒</button>
+                        `;
+                        document.getElementById('versionRemindLaterNew').addEventListener('click', () => {
+                            setCookie(COOKIE_LAST_REMIND, Date.now(), 1);
+                            versionAlertOverlay.classList.remove('show');
+                            document.body.style.overflow = '';
+                        });
+                        document.getElementById('versionIgnoreForeverNew').addEventListener('click', () => {
+                            setCookie(COOKIE_IGNORE_FOREVER, latestVersion, 3650);
+                            versionAlertOverlay.classList.remove('show');
+                            document.body.style.overflow = '';
+                        });
+                    }
                 }
 
                 versionAlertOverlay.addEventListener('click', (e) => {
