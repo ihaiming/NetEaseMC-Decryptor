@@ -1,7 +1,13 @@
 <!DOCTYPE html>
 <html lang="en">
+<!-- 
+NetEaseMCDecryptor
+GitHub: https://github.com/ihaiming/NetEaseMC-Decryptor
+License: GPL v3.0
+-->
 <head>
     <meta charset="UTF-8">
+    <meta name="author" content="ihaiming - github.com/ihaiming/NetEaseMC-Decryptor - GPL v3.0">
     <meta http-equiv="Cache-Control" content="no-store, no-cache, must-revalidate">
     <meta http-equiv="Pragma" content="no-cache">
     <meta http-equiv="Expires" content="0">
@@ -676,8 +682,8 @@
         (function() {
             'use strict';
 
-            const CURRENT_VERSION = '1.4.2';
-            const CURRENT_BUILD = 1420;
+            const CURRENT_VERSION = '1.4.3';
+            const CURRENT_BUILD = 1430;
             const VERSION_CHECK_URL = 'https://mc.hm0.top/upload/version.json';
             const COOKIE_IGNORE_FOREVER = 'version_ignore_forever';
             const COOKIE_LAST_REMIND = 'version_last_remind';
@@ -697,6 +703,12 @@
                     expires = '; expires=' + date.toUTCString();
                 }
                 document.cookie = name + '=' + (value || '') + expires + '; path=/';
+            }
+
+            function checkReadonlyFolderApi() {
+                const input = document.createElement('input');
+                input.type = 'file';
+                return 'webkitdirectory' in input || 'directory' in input;
             }
 
             document.addEventListener('DOMContentLoaded', function() {
@@ -728,7 +740,8 @@
                 };
 
                 const pseudoUnsupported = localStorage.getItem('fsApiPseudoUnsupported') === 'true';
-                const hasApi = 'showDirectoryPicker' in window;
+                const hasWriteApi = 'showDirectoryPicker' in window;
+                const hasReadApi = checkReadonlyFolderApi();
 
                 const ua = navigator.userAgent;
                 const chromeMatch = ua.match(/\bChrome\/(\d+)(?:\.\d+)*\b/);
@@ -745,8 +758,14 @@
                     note.innerHTML = '⚠️ Current browser does not support folder selection. Please use the ZIP file upload feature.';
                     apiNoteContainer.appendChild(note);
                 } else {
-                    if (hasApi) {
+                    if (hasWriteApi) {
                         fsApiBtn.style.display = 'inline-block';
+                    } else if (hasReadApi) {
+                        fsApiBtn.style.display = 'inline-block';
+                        const note = document.createElement('p');
+                        note.className = 'api-note warning';
+                        note.innerHTML = '⚠️ Folder decryption requires HTTPS. Please switch to https protocol and try again.';
+                        apiNoteContainer.appendChild(note);
                     } else {
                         fsApiBtn.style.display = 'none';
                         const note = document.createElement('p');
@@ -942,6 +961,13 @@
                 processBtn.addEventListener('click', startProcessing);
 
                 async function selectDirectory() {
+                    if (!('showDirectoryPicker' in window)) {
+                        status.innerHTML = '<span class="error">This feature requires HTTPS. Please change http to https in the address bar and try again.</span>';
+                        fileInfo.textContent = 'HTTPS required';
+                        processBtn.disabled = true;
+                        return;
+                    }
+                    
                     if (localStorage.getItem('fsApiPseudoUnsupported') === 'true') {
                         status.innerHTML = '<span class="error">Current browser does not support folder selection</span>';
                         fileInfo.textContent = 'Failed to select folder';
@@ -1233,4 +1259,9 @@
         })();
     </script>
 </body>
+<!-- 
+NetEaseMCDecryptor
+GitHub: https://github.com/ihaiming/NetEaseMC-Decryptor
+License: GPL v3.0
+-->
 </html>
