@@ -1,5 +1,8 @@
 # Minecraft 网易版存档解密工具
 
+[![License: GPLv3](https://img.shields.io/badge/License-GPLv3-blue.svg)](https://github.com/ihaiming/NetEaseMC-Decryptor/LICENSE)
+[![Stars](https://img.shields.io/github/stars/ihaiming/NetEaseMC-Decryptor)](https://github.com/ihaiming/NetEaseMC-Decryptor)
+
 ## 项目简介
 
 这是一个完全运行在浏览器的网易版我的世界（Minecraft）存档解密工具，无需安装任何软件，无需上传存档到服务器，所有操作均在本地完成并且完全开源
