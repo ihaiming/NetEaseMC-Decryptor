@@ -1,7 +1,7 @@
 # Minecraft 网易版存档解密工具
 
-[![License: GPLv3](https://img.shields.io/badge/License-GPLv3-blue.svg)](LICENSE)
-[![Stars](https://img.shields.io/github/stars/ihaiming/NetEaseMC-Decryptor)](https://github.com/ihaiming/NetEaseMC-Decryptor)
+[![License: GPLv3](https://img.shields.io/badge/License-GPLv3-blue.svg)](https://www.gnu.org/licenses/gpl-3.0)
+![Stars](https://img.shields.io/github/stars/ihaiming/NetEaseMC-Decryptor)
 
 ## 项目简介
 
