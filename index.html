@@ -398,6 +398,9 @@ Please do not delete this content, thank you very much!
             font-size: 1rem;
             line-height: 1.5;
         }
+        .sweet-alert-content a {
+            text-decoration: none;
+        }
         
         .sweet-alert-footer {
             padding: 16px 24px 24px 24px;
@@ -646,12 +649,14 @@ Please do not delete this content, thank you very much!
     </div>
 
     <footer>
-        <a href="https://www.gnu.org/licenses/gpl-3.0" target="_blank" rel="license noopener noreferrer">
-        <img src="https://img.shields.io/badge/License-GPLv3-blue.svg" alt="License: GPL v3"></a>
+        <a href="terms.html" target="_blank">用户协议</a> | 
+        <a href="privacy.html" target="_blank">隐私政策</a>
+        <br>
+        <img style='display:inline-block;vertical-align:middle' alt="本站已支持IPv6访问" src="ipv6_black.svg">
         <br>
         <a href="https://hm0.top/start-page.html" target="_blank">联系我们</a>
         <br>
-        <a href="https://hm0.top/go/mc.html" target="_blank">部署同款项目</a>
+        <a href="https://hm0.top/go/mc.html" target="_blank">项目源码</a>
         <br>
         <a href="https://en.mc.hm0.top/" target="_blank">English Version</a>
     </footer>
@@ -668,7 +673,9 @@ Please do not delete this content, thank you very much!
                 <br>
                 如有问题，点击下方联系我们
                 <br>
-                <span style="color: #E65100;">To make our content more accessible to non-Chinese speakers, we’ve added an English version of this page, You need to click "English Version" at the bottom.
+                <span style="color: #E65100;">To make our content more accessible to non-Chinese speakers, we’ve added an English version of this page, You need to click "<a href="https://en.mc.hm0.top" target="_blank">English Version</a>" at the bottom.
+                <br>
+                <span style="font-size: 0.9rem; font-weight: 500;">请您务必在使用前阅读 <a href="terms.html" target="_blank">《用户协议》</a> 与 <a href="privacy.html" target="_blank">《隐私政策》</a></span>
             </div>
             <div class="sweet-alert-footer">
                 <button class="sweet-alert-btn" id="sweetAlertConfirmBtn">确定</button>
@@ -693,8 +700,8 @@ Please do not delete this content, thank you very much!
         (function() {
             'use strict';
 
-            const CURRENT_VERSION = '1.4.4';
-            const CURRENT_BUILD = 1440;
+            const CURRENT_VERSION = '1.4.5';
+            const CURRENT_BUILD = 1450;
             const VERSION_CHECK_URL = 'https://mc.hm0.top/upload/version.json';
             const COOKIE_IGNORE_FOREVER = 'version_ignore_forever';
             const COOKIE_LAST_REMIND = 'version_last_remind';
