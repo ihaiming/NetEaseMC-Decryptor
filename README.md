@@ -11,15 +11,24 @@
 - 请参阅 [CHANGELOG](CHANGELOG.md) 文件
 
 ## 用户协议与隐私政策
+Terms of Use and Privacy Policy
 
 为明确使用者权利义务并规避法律风险，本项目附带以下两份文件：
+To clarify user rights and obligations and mitigate legal risks, this project includes the following two documents:
 
 - **[用户协议](terms.md)**：规定使用本工具的条件、禁止行为、免责声明、责任限制等。
+- **[Terms of Use](terms_EN.md)**: Sets out the conditions of use, prohibited conduct, disclaimers, limitation of liability, etc.
 - **[隐私政策](privacy.md)**：说明本工具如何收集、处理和保护信息，核心原则是**所有操作均在浏览器本地完成，存档文件不会上传至任何服务器**。
+- **[Privacy Policy](privacy_EN.md)**: Explains how this tool collects, processes, and protects information. The core principle is that **all operations are performed locally in your browser, and save files are never uploaded to any server**.
 
 **使用、修改或分发本工具即表示您已阅读并同意上述两份文件的内容。** 若您未满 18 周岁，请在监护人陪同下阅读。
+**By using, modifying, or distributing this tool, you acknowledge that you have read and agreed to the contents of the above two documents.** If you are under 18, please read them under the guidance of a guardian.
+
+**若您不阅读上述文件，或阅读后不接受其任何条款，请立即停止使用本工具。**
+**If you do not read the above documents, or do not accept any of their terms after reading, please stop using this tool immediately.**
 
 若涉及修改或分发，请一并遵守 GPL-3.0 许可证。
+If you modify or distribute this project, you must also comply with the GPL-3.0 license.
 
 ## 🚀 快速开始
 
@@ -156,13 +165,19 @@ git clone https://github.com/ihaiming/NetEaseMC-Decryptor.git
 ```
 
 NetEaseMC-Decryptor/
-├── CHANGELOG.md              # 更新日志
-├── LICENSE                   # GPL-3.0许可证
-├── index.html                # 中文版主页面
-├── index_EN.html             # 英文版主页面
-├── terms.md                  # 用户协议
-├── privacy.md                # 隐私政策
-└── README.md                 # 说明文档
+├── index.html              # 中文版主页面
+├── index_EN.html           # 英文版主页面
+├── terms.md                # 中文用户协议
+├── terms.html              # 中文用户协议（HTML）
+├── terms_EN.md             # 英文用户协议
+├── terms_EN.html           # 英文用户协议（HTML）
+├── privacy.md              # 中文隐私政策
+├── privacy.html            # 中文隐私政策（HTML）
+├── privacy_EN.md           # 英文隐私政策
+├── privacy_EN.html         # 英文隐私政策（HTML）
+├── CHANGELOG.md            # 更新日志
+├── LICENSE                 # GPL-3.0许可证
+└── README.md               # 说明文档
 
 ```
 
